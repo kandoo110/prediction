@@ -136,22 +136,22 @@
     <div class="dashboard-bar">
         <div class="dash-card">
             <div class="dash-title">💰 موجودی بازی</div>
-            <div class="dash-value" id="user-balance">500 WLF</div>
+            <div class="dash-value" id="user-balance">250,000 WLF</div>
         </div>
         <div class="dash-card">
             <div class="dash-title">💵 قابل برداشت</div>
-            <div class="dash-value" id="user-claimable">200 WLF</div>
+            <div class="dash-value" id="user-claimable">220,000 WLF</div>
         </div>
     </div>
 
     <div class="dashboard-bar">
         <div class="dash-card">
             <div class="dash-title">📈 استخر کریپتو</div>
-            <div class="dash-value" id="crypto-pool">1,250 WLF</div>
+            <div class="dash-value" id="crypto-pool">1,250,000 WLF</div>
         </div>
         <div class="dash-card">
             <div class="dash-title">⚽ استخر فوتبال</div>
-            <div class="dash-value" id="football-pool">2,500 WLF</div>
+            <div class="dash-value" id="football-pool">2,500,000 WLF</div>
         </div>
     </div>
 
@@ -161,7 +161,7 @@
 
     <div class="action-btns-grid">
         <button class="btn-action btn-deposit-crypto" onclick="depositToCryptoPool()">📥 شارژ استخر کریپتو</button>
-        <button class="btn-action btn-withdraw-pool" onclick="withdrawFromPools()">📤 برداشت جایزه از استخرها</button>
+        <button class="btn-action btn-withdraw-pool" onclick="withdrawWithMinLimit()">📤 برداشت (حداقل 200هزار)</button>
     </div>
 
     <div class="tabs-wrapper">
@@ -181,10 +181,10 @@
                 </div>
                 <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای قیمت</div>
                 <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('BTC', 'UP', 50)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('BTC', 'DOWN', 50)">🔴 نزولی</button>
+                    <button class="btn-predict btn-up" onclick="makeCryptoBet('BTC', 'UP', 1000)">🟢 صعودی</button>
+                    <button class="btn-predict btn-down" onclick="makeCryptoBet('BTC', 'DOWN', 1000)">🔴 نزولی</button>
                 </div>
-                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
+                <div class="fee-badge">ورودی: ۱,۰۰۰ توکن WLF$</div>
             </div>
         </div>
     </div>
@@ -201,11 +201,11 @@
                         <span>🔴 بارسلونا</span>
                     </div>
                     <div class="football-options">
-                        <button class="btn-option" onclick="makeFootballBet('Match1', 'HOME', 500)">برد میزبان</button>
-                        <button class="btn-option" onclick="makeFootballBet('Match1', 'DRAW', 500)">مساوی</button>
-                        <button class="btn-option" onclick="makeFootballBet('Match1', 'AWAY', 500)">برد میهمان</button>
+                        <button class="btn-option" onclick="makeFootballBet('Match1', 'HOME', 5000)">برد میزبان</button>
+                        <button class="btn-option" onclick="makeFootballBet('Match1', 'DRAW', 5000)">مساوی</button>
+                        <button class="btn-option" onclick="makeFootballBet('Match1', 'AWAY', 5000)">برد میهمان</button>
                     </div>
-                    <div class="fee-badge">ورودی: ۵۰۰ WLF | واریز به استخر فوتبال</div>
+                    <div class="fee-badge">ورودی: ۵,۰۰۰ WLF | واریز به استخر فوتبال</div>
                 </div>
             </div>
         </div>
@@ -220,8 +220,11 @@
             buttonRootId: 'ton-connect-button'
         });
 
-        let userBalance = 500;
-        let claimableBalance = 200;
+        let userBalance = 250000;
+        let claimableBalance = 220000;
+        
+        const MIN_WITHDRAWAL_LIMIT = 200000; // حداقل ۲۰۰ هزار توکن برای برداشت
+        const WITHDRAWAL_FEE = 1000; // کارمزد شبکه کسر شده از توکن کاربر
 
         function updateUI() {
             document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
@@ -233,7 +236,7 @@
         const CRYPTO_POOL_WALLET = "UQCeHlHUwoFhVcLQoJMXOvtcDskkrN1g4q6NVvdFimwp3Hnz";
         const FOOTBALL_POOL_WALLET = "UQAD8y_EPRPmbDwK_e1pXXq9hCKpfNx8JWvUyqh5xB22k42H";
 
-        // واریز به استخر کریپتو (کارمزد از کاربر کسر می‌شود)
+        // واریز به استخر کریپتو
         async function depositToCryptoPool() {
             if (!tonConnectUI.connected) {
                 alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
@@ -246,13 +249,13 @@
                     messages: [
                         {
                             address: CRYPTO_POOL_WALLET,
-                            amount: "5000000" // کارمزد شبکه از ولت کاربر
+                            amount: "5000000"
                         }
                     ]
                 };
 
                 await tonConnectUI.sendTransaction(transaction);
-                userBalance += 1000;
+                userBalance += 10000;
                 updateUI();
                 alert("تراکنش موفق! استخر کریپتو شارژ شد.");
             } catch (e) {
@@ -261,39 +264,41 @@
             }
         }
 
-        // برداشت جوایز (ارسال از آدرس استخر کریپتو/فوتبال به ولت کاربر - کارمزد از ولت استخر پرداخت می‌شود)
-        async function withdrawFromPools() {
+        // بررسی حداقل موجودی (۲۰۰ هزار) و برداشت با کسر کارمزد
+        async function withdrawWithMinLimit() {
             if (!tonConnectUI.connected) {
                 alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
                 return;
             }
-            if (claimableBalance <= 0) {
-                alert("موجودی قابل برداشتی ندارید!");
+            
+            // شرط حداقل ۲۰۰,۰۰۰ توکن
+            if (claimableBalance < MIN_WITHDRAWAL_LIMIT) {
+                alert(`حداقل موجودی قابل برداشت باید ${MIN_WITHDRAWAL_LIMIT.toLocaleString()} توکن WLF باشد! موجودی فعلی شما کافی نیست.`);
                 return;
             }
 
             try {
-                // در اینجا تراکنش برداشت از استخر به ولت متصل شده کاربر هدایت می‌شود
-                const userWalletAddress = tonConnectUI.wallet.account.address;
+                const netAmountToReceive = claimableBalance - WITHDRAWAL_FEE;
                 
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 300,
                     messages: [
                         {
-                            address: CRYPTO_POOL_WALLET, // مبدا پرداخت جایزه
-                            amount: "10000000" // کارمزد پرداخت شده توسط استخر
+                            address: CRYPTO_POOL_WALLET,
+                            amount: "5000000" // کارمزد TON پرداختی از سمت استخر
                         }
                     ]
                 };
 
                 await tonConnectUI.sendTransaction(transaction);
-                let withdrawn = claimableBalance;
+                
                 claimableBalance = 0;
                 updateUI();
-                alert(`موفقیت‌آمیز! مبلغ ${withdrawn.toLocaleString()} WLF$ به کیف پول شما واریز شد.`);
+                
+                alert(`برداشت موفق!\nمبلغ ${netAmountToReceive.toLocaleString()} WLF (پس از کسر کارمزد شبکه) به کیف پول شما واریز شد.`);
             } catch (e) {
                 console.error(e);
-                alert("خطا در انجام برداشت از استخر.");
+                alert("خطا در انجام تراکنش برداشت.");
             }
         }
 
