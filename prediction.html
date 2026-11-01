@@ -21,73 +21,95 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 8px 10px;
+            padding: 10px 12px;
             box-sizing: border-box;
             user-select: none;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .header h3 {
             color: var(--accent-yellow);
-            margin: 2px 0;
-            font-size: 20px;
+            margin: 3px 0;
+            font-size: 22px;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
+        /* داشبورد و دکمه واریز */
         .dashboard-bar {
             display: flex;
             gap: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .dash-card {
             flex: 1;
-            background: linear-gradient(135deg, rgba(0, 87, 183, 0.3), rgba(255, 215, 0, 0.1));
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 14px;
-            padding: 8px;
+            background: linear-gradient(135deg, rgba(0, 87, 183, 0.35), rgba(255, 215, 0, 0.12));
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 16px;
+            padding: 10px;
             text-align: center;
         }
 
         .dash-title {
-            font-size: 10px;
-            color: #8e9aaf;
-            margin-bottom: 2px;
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 3px;
         }
 
         .dash-value {
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 15px;
+            font-weight: 800;
             color: var(--accent-yellow);
         }
+
+        /* دکمه واریز توکن */
+        .deposit-btn-wrapper {
+            margin-bottom: 14px;
+        }
+
+        .btn-deposit {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            border: none;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0b0e14;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            transition: transform 0.1s;
+        }
+
+        .btn-deposit:active { transform: scale(0.97); }
 
         .tabs-wrapper {
             background: linear-gradient(135deg, #0057b7, #ffd700);
             padding: 1.5px;
-            border-radius: 14px;
-            margin-bottom: 10px;
+            border-radius: 16px;
+            margin-bottom: 12px;
         }
 
         .tabs {
             display: flex;
             background: #0f1624;
-            border-radius: 13px;
+            border-radius: 15px;
             padding: 2px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 8px;
+            padding: 10px;
             border: none;
             background: transparent;
             color: #8e9aaf;
             font-weight: bold;
-            font-size: 12px;
-            border-radius: 11px;
+            font-size: 13px;
+            border-radius: 13px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -95,7 +117,7 @@
         .tab-btn.active {
             background: linear-gradient(135deg, #0057b7, #003d82);
             color: #ffffff;
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.4);
         }
 
         .tab-content { display: none; }
@@ -104,9 +126,9 @@
         .card-wrapper {
             background: linear-gradient(135deg, #0057b7 0%, rgba(0, 87, 183, 0.3) 50%, #ffd700 100%);
             padding: 1.5px;
-            border-radius: 16px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 15px rgba(0, 87, 183, 0.2);
+            border-radius: 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 20px rgba(0, 87, 183, 0.25);
         }
 
         .card-wrapper.finished {
@@ -116,69 +138,70 @@
 
         .crypto-card, .match-card {
             background: var(--card-bg);
-            border-radius: 15px;
-            padding: 12px;
+            border-radius: 17px;
+            padding: 14px;
         }
 
         .crypto-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .crypto-title {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: bold;
             color: #ffffff;
         }
 
         .crypto-price {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 800;
             color: var(--accent-yellow);
         }
 
         .prediction-controls {
             display: flex;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 12px;
         }
 
         .btn-predict {
             flex: 1;
-            padding: 9px;
+            padding: 11px;
             border: none;
-            border-radius: 12px;
-            font-size: 12px;
+            border-radius: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         .btn-up { background: linear-gradient(135deg, #2ed573, #10ac84); }
         .btn-down { background: linear-gradient(135deg, #ff4757, #ff3838); }
 
         .match-time {
-            font-size: 10px;
+            font-size: 12px;
             color: var(--accent-yellow);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: inline-block;
-            background: rgba(255, 215, 0, 0.1);
-            padding: 2px 8px;
-            border-radius: 8px;
+            background: rgba(255, 215, 0, 0.12);
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-weight: bold;
         }
 
         .match-status-badge {
             float: left;
-            font-size: 10px;
+            font-size: 11px;
             background: rgba(255, 71, 87, 0.2);
             color: #ff4757;
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 8px;
             font-weight: bold;
         }
@@ -187,28 +210,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 6px 0;
-            font-size: 12px;
-            font-weight: bold;
+            margin: 10px 0;
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffffff;
         }
 
-        .vs { font-size: 11px; color: #8e9aaf; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 8px; }
+        .vs { font-size: 12px; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 5px 10px; border-radius: 10px; }
 
         .football-options {
             display: flex;
-            gap: 6px;
-            margin-top: 10px;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .btn-option {
             flex: 1;
-            padding: 8px 2px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 11px 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: bold;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
             cursor: pointer;
         }
 
@@ -220,10 +244,11 @@
         }
 
         .fee-badge {
-            font-size: 10px;
-            color: #8e9aaf;
+            font-size: 11px;
+            color: #94a3b8;
             text-align: center;
-            margin-top: 6px;
+            margin-top: 8px;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -233,15 +258,21 @@
         <h3>⚡ WLF Prediction Arena</h3>
     </div>
 
+    <!-- داشبورد موجودی و استخر -->
     <div class="dashboard-bar">
-        <div class="dash-card">
-            <div class="dash-title">💰 موجودی شما</div>
-            <div class="dash-value" id="user-balance">0 WLF</div>
-        </div>
         <div class="dash-card">
             <div class="dash-title">🏆 استخر جایزه راند</div>
             <div class="dash-value" id="pool-total">0 WLF</div>
         </div>
+        <div class="dash-card">
+            <div class="dash-title">💰 موجودی شما</div>
+            <div class="dash-value" id="user-balance">0 WLF</div>
+        </div>
+    </div>
+
+    <!-- دکمه واریز توکن به اپ -->
+    <div class="deposit-btn-wrapper">
+        <button class="btn-deposit" onclick="depositTokens()">+ واریز ۵۰۰ توکن WLF$ به حساب</button>
     </div>
 
     <div class="tabs-wrapper">
@@ -251,7 +282,7 @@
         </div>
     </div>
 
-    <!-- کریپتو -->
+    <!-- کریپتو (۵ دقیقه - ۵۰ توکن) -->
     <div id="crypto-tab" class="tab-content active">
         <div class="card-wrapper">
             <div class="crypto-card">
@@ -259,12 +290,12 @@
                     <div class="crypto-title">🪙 Bitcoin (BTC)</div>
                     <div class="crypto-price" id="btc-price">در حال دریافت...</div>
                 </div>
-                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۱ دقیقه‌ای قیمت</div>
+                <div style="font-size: 12px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای قیمت</div>
                 <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('BTC', 'UP', 10)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('BTC', 'DOWN', 10)">🔴 نزولی</button>
+                    <button class="btn-predict btn-up" onclick="makeCryptoBet('BTC', 'UP', 50)">🟢 صعودی</button>
+                    <button class="btn-predict btn-down" onclick="makeCryptoBet('BTC', 'DOWN', 50)">🔴 نزولی</button>
                 </div>
-                <div class="fee-badge">ورودی: ۱۰ توکن WLF$</div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
             </div>
         </div>
 
@@ -274,12 +305,12 @@
                     <div class="crypto-title">💎 Ethereum (ETH)</div>
                     <div class="crypto-price" id="eth-price">در حال دریافت...</div>
                 </div>
-                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۱ دقیقه‌ای قیمت</div>
+                <div style="font-size: 12px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای قیمت</div>
                 <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('ETH', 'UP', 10)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('ETH', 'DOWN', 10)">🔴 نزولی</button>
+                    <button class="btn-predict btn-up" onclick="makeCryptoBet('ETH', 'UP', 50)">🟢 صعودی</button>
+                    <button class="btn-predict btn-down" onclick="makeCryptoBet('ETH', 'DOWN', 50)">🔴 نزولی</button>
                 </div>
-                <div class="fee-badge">ورودی: ۱۰ توکن WLF$</div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
             </div>
         </div>
 
@@ -289,17 +320,17 @@
                     <div class="crypto-title">💎 Toncoin (TON)</div>
                     <div class="crypto-price" id="ton-price">در حال دریافت...</div>
                 </div>
-                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۱ دقیقه‌ای قیمت</div>
+                <div style="font-size: 12px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای قیمت</div>
                 <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('TON', 'UP', 10)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('TON', 'DOWN', 10)">🔴 نزولی</button>
+                    <button class="btn-predict btn-up" onclick="makeCryptoBet('TON', 'UP', 50)">🟢 صعودی</button>
+                    <button class="btn-predict btn-down" onclick="makeCryptoBet('TON', 'DOWN', 50)">🔴 نزولی</button>
                 </div>
-                <div class="fee-badge">ورودی: ۱۰ توکن WLF$</div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
             </div>
         </div>
     </div>
 
-    <!-- فوتبال -->
+    <!-- فوتبال (۵۰۰ توکن) -->
     <div id="football-tab" class="tab-content">
         <div id="football-matches-container">
             <div class="card-wrapper" id="match-1">
@@ -311,11 +342,11 @@
                         <span>🔴 بارسلونا</span>
                     </div>
                     <div class="football-options">
-                        <button class="btn-option" id="m1-home" onclick="makeFootballBet('Match1', 'HOME', 50)">برد میزبان</button>
-                        <button class="btn-option" id="m1-draw" onclick="makeFootballBet('Match1', 'DRAW', 50)">مساوی</button>
-                        <button class="btn-option" id="m1-away" onclick="makeFootballBet('Match1', 'AWAY', 50)">برد میهمان</button>
+                        <button class="btn-option" id="m1-home" onclick="makeFootballBet('Match1', 'HOME', 500)">برد میزبان</button>
+                        <button class="btn-option" id="m1-draw" onclick="makeFootballBet('Match1', 'DRAW', 500)">مساوی</button>
+                        <button class="btn-option" id="m1-away" onclick="makeFootballBet('Match1', 'AWAY', 500)">برد میهمان</button>
                     </div>
-                    <div class="fee-badge">ورودی: ۵۰ توکن WLF$ | جایزه فقط برای پیش‌بینی کاملاً درست!</div>
+                    <div class="fee-badge">ورودی: ۵۰۰ توکن WLF$ | جایزه فقط برای پیش‌بینی کاملاً درست!</div>
                 </div>
             </div>
 
@@ -340,10 +371,10 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // مقداردهی اولیه واقعی با حافظه ماندگار (اگر کاربر اولین بار باشد ۱۰۰۰ توکن هدیه اولیه می‌گیرد)
+        // مدیریت موجودی و استخر واقعی با حافظه ماندگار
         let userBalance = localStorage.getItem('wlf_user_balance');
         if (userBalance === null) {
-            userBalance = 1000; // هدیه اولیه ورود به مینی‌اپ
+            userBalance = 1000; // هدیه اولیه
             localStorage.setItem('wlf_user_balance', userBalance);
         } else {
             userBalance = parseInt(userBalance);
@@ -351,18 +382,25 @@
 
         let poolTotal = localStorage.getItem('wlf_pool_total');
         if (poolTotal === null) {
-            poolTotal = 15000; // مقدار اولیه استخر واقعی
+            poolTotal = 25000; 
             localStorage.setItem('wlf_pool_total', poolTotal);
         } else {
             poolTotal = parseInt(poolTotal);
         }
 
-        // نمایش مقادیر روی صفحه
         function updateUI() {
             document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
             document.getElementById('pool-total').innerText = poolTotal.toLocaleString() + " WLF";
         }
         updateUI();
+
+        // تابع واریز توکن به حساب مینی‌اپ
+        function depositTokens() {
+            userBalance += 500;
+            localStorage.setItem('wlf_user_balance', userBalance);
+            updateUI();
+            alert("۵۰۰ توکن WLF$ با موفقیت به حساب شما در مینی‌اپ واریز شد!");
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -395,34 +433,32 @@
 
         function makeCryptoBet(symbol, direction, fee) {
             if (userBalance < fee) {
-                alert("موجودی WLF$ شما کافی نیست! ابتدا حساب خود را شارژ کنید.");
+                alert("موجودی WLF$ شما کافی نیست! از دکمه 'واریز توکن' حساب خود را شارژ کنید.");
                 return;
             }
             userBalance -= fee;
             poolTotal += fee;
 
-            // ذخیره در حافظه ماندگار
             localStorage.setItem('wlf_user_balance', userBalance);
             localStorage.setItem('wlf_pool_total', poolTotal);
             updateUI();
 
-            alert(`پیش‌بینی ${direction === 'UP' ? 'صعودی 🟢' : 'نزولی 🔴'} برای ${symbol} ثبت شد.\n${fee} توکن WLF$ از موجودی شما کسر و به استخر اضافه گردید.`);
+            alert(`پیش‌بینی ۵ دقیقه‌ای ${direction === 'UP' ? 'صعودی 🟢' : 'نزولی 🔴'} برای ${symbol} ثبت شد.\n${fee} توکن WLF$ از حساب شما کسر گردید.`);
         }
 
         function makeFootballBet(matchId, choice, fee) {
             if (userBalance < fee) {
-                alert("موجودی WLF$ شما کافی نیست!");
+                alert("موجودی WLF$ شما کافی نیست! برای شرکت در این پیش‌بینی به ۵۰۰ توکن نیاز دارید.");
                 return;
             }
             userBalance -= fee;
             poolTotal += fee;
 
-            // ذخیره در حافظه ماندگار
             localStorage.setItem('wlf_user_balance', userBalance);
             localStorage.setItem('wlf_pool_total', poolTotal);
             updateUI();
 
-            alert(`پیش‌بینی فوتبال ثبت شد.\n${fee} توکن از حساب شما کسر و به استخر اضافه شد.`);
+            alert(`پیش‌بینی مسابقه فوتبال با موفقیت ثبت شد.\n۵۰۰ توکن WLF$ کسر و به استخر اضافه شد.`);
             
             if(matchId === 'Match1') {
                 document.getElementById('m1-home').disabled = true;
