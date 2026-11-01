@@ -109,7 +109,6 @@
             box-shadow: 0 4px 15px rgba(0, 87, 183, 0.2);
         }
 
-        /* استایل حالت پایان یافته و خاکستری برای مسابقات فوتبال */
         .card-wrapper.finished {
             background: rgba(100, 100, 100, 0.3);
             opacity: 0.65;
@@ -237,11 +236,11 @@
     <div class="dashboard-bar">
         <div class="dash-card">
             <div class="dash-title">💰 موجودی شما</div>
-            <div class="dash-value" id="user-balance">1,000 WLF</div>
+            <div class="dash-value" id="user-balance">0 WLF</div>
         </div>
         <div class="dash-card">
             <div class="dash-title">🏆 استخر جایزه راند</div>
-            <div class="dash-value" id="pool-total">24,500 WLF</div>
+            <div class="dash-value" id="pool-total">0 WLF</div>
         </div>
     </div>
 
@@ -300,10 +299,9 @@
         </div>
     </div>
 
-    <!-- فوتبال (دارای قابلیت انتقال به پایین و حالت خاکستری پس از اتمام) -->
+    <!-- فوتبال -->
     <div id="football-tab" class="tab-content">
         <div id="football-matches-container">
-            <!-- مسابقه فعال ۱ -->
             <div class="card-wrapper" id="match-1">
                 <div class="match-card">
                     <div class="match-time">⏱️ امشب - ساعت ۲۲:۳۰</div>
@@ -321,7 +319,6 @@
                 </div>
             </div>
 
-            <!-- مسابقه قبلی/تمام شده (به صورت پیش‌فرض خاکستری و در انتها) -->
             <div class="card-wrapper finished" id="match-finished-1">
                 <div class="match-card">
                     <div class="match-time">دیروز <span class="match-status-badge">پایان یافته (نتیجه: ۲-۱)</span></div>
@@ -343,8 +340,29 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let userBalance = 1000;
-        let poolTotal = 24500;
+        // مقداردهی اولیه واقعی با حافظه ماندگار (اگر کاربر اولین بار باشد ۱۰۰۰ توکن هدیه اولیه می‌گیرد)
+        let userBalance = localStorage.getItem('wlf_user_balance');
+        if (userBalance === null) {
+            userBalance = 1000; // هدیه اولیه ورود به مینی‌اپ
+            localStorage.setItem('wlf_user_balance', userBalance);
+        } else {
+            userBalance = parseInt(userBalance);
+        }
+
+        let poolTotal = localStorage.getItem('wlf_pool_total');
+        if (poolTotal === null) {
+            poolTotal = 15000; // مقدار اولیه استخر واقعی
+            localStorage.setItem('wlf_pool_total', poolTotal);
+        } else {
+            poolTotal = parseInt(poolTotal);
+        }
+
+        // نمایش مقادیر روی صفحه
+        function updateUI() {
+            document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
+            document.getElementById('pool-total').innerText = poolTotal.toLocaleString() + " WLF";
+        }
+        updateUI();
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -382,10 +400,13 @@
             }
             userBalance -= fee;
             poolTotal += fee;
-            document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
-            document.getElementById('pool-total').innerText = poolTotal.toLocaleString() + " WLF";
 
-            alert(`پیش‌بینی ${direction === 'UP' ? 'صعودی 🟢' : 'نزولی 🔴'} برای ${symbol} ثبت شد.\n${fee} توکن WLF$ از موجودی شما کسر شد.`);
+            // ذخیره در حافظه ماندگار
+            localStorage.setItem('wlf_user_balance', userBalance);
+            localStorage.setItem('wlf_pool_total', poolTotal);
+            updateUI();
+
+            alert(`پیش‌بینی ${direction === 'UP' ? 'صعودی 🟢' : 'نزولی 🔴'} برای ${symbol} ثبت شد.\n${fee} توکن WLF$ از موجودی شما کسر و به استخر اضافه گردید.`);
         }
 
         function makeFootballBet(matchId, choice, fee) {
@@ -395,12 +416,14 @@
             }
             userBalance -= fee;
             poolTotal += fee;
-            document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
-            document.getElementById('pool-total').innerText = poolTotal.toLocaleString() + " WLF";
 
-            alert(`پیش‌بینی فوتبال ثبت شد.\nاستخر جایزه افزایش یافت و جایزه صرفاً بین کسانی که نتیجه دقیق را حدس بزنند تقسیم می‌شود.`);
+            // ذخیره در حافظه ماندگار
+            localStorage.setItem('wlf_user_balance', userBalance);
+            localStorage.setItem('wlf_pool_total', poolTotal);
+            updateUI();
+
+            alert(`پیش‌بینی فوتبال ثبت شد.\n${fee} توکن از حساب شما کسر و به استخر اضافه شد.`);
             
-            // قفل کردن دکمه‌های این مسابقه پس از ثبت پیش‌بینی
             if(matchId === 'Match1') {
                 document.getElementById('m1-home').disabled = true;
                 document.getElementById('m1-draw').disabled = true;
