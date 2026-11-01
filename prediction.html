@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WLF Prediction Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         :root {
             --bg-color: #080b10;
@@ -39,7 +40,6 @@
             text-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
         }
 
-        /* داشبورد فشرده و فیت موبایل */
         .dashboard-bar {
             display: flex;
             gap: 6px;
@@ -67,26 +67,18 @@
             color: var(--accent-yellow);
         }
 
-        /* دکمه اتصال کیف پول واقعی */
+        /* جایگاه استاندارد دکمه TonConnect بدون کد اضافی */
         .wallet-btn-wrapper {
             margin-bottom: 8px;
+            display: flex;
+            justify-content: center;
         }
 
-        .btn-wallet {
+        #ton-connect-button {
             width: 100%;
-            padding: 9px;
-            background: linear-gradient(135deg, #0088cc, #005580);
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 800;
-            color: #ffffff;
-            cursor: pointer;
-            box-shadow: 0 3px 12px rgba(0, 136, 204, 0.3);
-            transition: transform 0.1s;
+            display: flex;
+            justify-content: center;
         }
-
-        .btn-wallet:active { transform: scale(0.97); }
 
         .tabs-wrapper {
             background: linear-gradient(135deg, #0057b7, #ffd700);
@@ -270,9 +262,9 @@
         </div>
     </div>
 
-    <!-- دکمه اتصال کیف پول واقعی -->
+    <!-- دکمه استاندارد و واقعی TonConnect بدون پیام تستی -->
     <div class="wallet-btn-wrapper">
-        <button class="btn-wallet" id="wallet-btn" onclick="connectWallet()">🔗 اتصال کیف پول TON (Tonkeeper)</button>
+        <div id="ton-connect-button"></div>
     </div>
 
     <div class="tabs-wrapper">
@@ -371,15 +363,13 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // موجودی واقعی کاربر (پیش‌فرض صفر تا زمانی که کیف پول متصل و موجودی خوانده شود)
-        let userBalance = localStorage.getItem('wlf_real_balance');
-        if (userBalance === null) {
-            userBalance = 0; 
-            localStorage.setItem('wlf_real_balance', userBalance);
-        } else {
-            userBalance = parseInt(userBalance);
-        }
+        // راه‌اندازی TonConnect واقعی
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://prediction-ldxa.onrender.com/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+        });
 
+        let userBalance = 0;
         let poolTotal = 25000;
 
         function updateUI() {
@@ -388,17 +378,17 @@
         }
         updateUI();
 
-        // تابع اتصال به کیف پول واقعی
-        function connectWallet() {
-            // در اینجا ساختار استاندارد اتصال ولت TON قرار می‌گیرد
-            alert("در حال اتصال به کیف پول TON...\n(پس از راه‌اندازی کامل TonConnect روی سرور، موجودی واقعی توکن‌های WLF$ شما از بلاکچین خوانده خواهد شد)");
-            
-            // شبیه‌سازی اتصال موفق برای تست ظاهر کار (می‌توانید بعداً با پکیج TonConnect جایگزین کنید)
-            setTimeout(() => {
-                document.getElementById('wallet-btn').innerText = "✅ متصل: EQAUE...90n6st0";
-                document.getElementById('wallet-btn').style.background = "linear-gradient(135deg, #2ed573, #10ac84)";
-            }, 1000);
-        }
+        // بررسی وضعیت اتصال واقعی ولت
+        tonConnectUI.onStatusChange(wallet => {
+            if (wallet) {
+                console.log("Wallet connected:", wallet);
+                userBalance = 1000; // موجودی تست پس از اتصال واقعی به ولت
+                updateUI();
+            } else {
+                userBalance = 0;
+                updateUI();
+            }
+        });
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -430,28 +420,32 @@
         setInterval(fetchCryptoPrices, 10000);
 
         function makeCryptoBet(symbol, direction, fee) {
+            if (!tonConnectUI.connected) {
+                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
+                return;
+            }
             if (userBalance < fee) {
-                alert("موجودی WLF$ شما در کیف پول کافی نیست! ابتدا کیف پول خود را متصل کرده و توکن شارژ کنید.");
+                alert("موجودی WLF$ در کیف پول شما کافی نیست!");
                 return;
             }
             userBalance -= fee;
             poolTotal += fee;
-
-            localStorage.setItem('wlf_real_balance', userBalance);
             updateUI();
 
-            alert(`پیش‌بینی ۵ دقیقه‌ای ${direction === 'UP' ? 'صعودی 🟢' : 'نزولی 🔴'} برای ${symbol} ثبت شد.\n${fee} توکن WLF$ از حساب شما کسر گردید.`);
+            alert(`پیش‌بینی ۵ دقیقه‌ای ${direction === 'UP' ? 'صعودی 🟢' : 'نزولی 🔴'} برای ${symbol} ثبت شد.\n${fee} توکن از کیف پول شما کسر گردید.`);
         }
 
         function makeFootballBet(matchId, choice, fee) {
+            if (!tonConnectUI.connected) {
+                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
+                return;
+            }
             if (userBalance < fee) {
-                alert("موجودی WLF$ شما در کیف پول کافی نیست! برای شرکت در این پیش‌بینی به ۵۰۰ توکن نیاز دارید.");
+                alert("موجودی WLF$ شما کافی نیست!");
                 return;
             }
             userBalance -= fee;
             poolTotal += fee;
-
-            localStorage.setItem('wlf_real_balance', userBalance);
             updateUI();
 
             alert(`پیش‌بینی مسابقه فوتبال ثبت شد.\n۵۰۰ توکن WLF$ کسر و به استخر اضافه شد.`);
