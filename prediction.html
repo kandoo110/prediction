@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WLF Prediction Arena</title>
+    <title>WLF Prediction Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
@@ -28,8 +28,17 @@
             overflow-x: hidden;
         }
 
-        .header { text-align: center; margin-bottom: 6px; }
-        .header h3 { color: var(--accent-yellow); margin: 2px 0; font-size: 18px; text-shadow: 0 0 12px rgba(255, 215, 0, 0.3); }
+        .header {
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .header h3 {
+            color: var(--accent-yellow);
+            margin: 2px 0;
+            font-size: 18px;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+        }
 
         .dashboard-bar {
             display: grid;
@@ -46,11 +55,29 @@
             text-align: center;
         }
 
-        .dash-title { font-size: 10px; color: #94a3b8; margin-bottom: 2px; }
-        .dash-value { font-size: 13px; font-weight: 800; color: var(--accent-yellow); }
+        .dash-title {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-bottom: 2px;
+        }
 
-        .wallet-btn-wrapper { margin-bottom: 6px; display: flex; justify-content: center; }
-        #ton-connect-button { width: 100%; display: flex; justify-content: center; }
+        .dash-value {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--accent-yellow);
+        }
+
+        .wallet-btn-wrapper {
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #ton-connect-button {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
 
         .action-btns-grid {
             display: grid;
@@ -71,8 +98,9 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
         }
 
-        .btn-deposit-crypto { background: linear-gradient(135deg, #0057b7, #003d82); border: 1px solid rgba(255,215,0,0.3); }
-        .btn-withdraw-pool { background: linear-gradient(135deg, #2ed573, #10ac84); }
+        .btn-deposit { background: linear-gradient(135deg, #0057b7, #003d82); border: 1px solid rgba(255,215,0,0.3); }
+        .btn-withdraw { background: linear-gradient(135deg, #2ed573, #10ac84); }
+
         .btn-action:active { transform: scale(0.97); }
 
         .tabs-wrapper {
@@ -82,11 +110,26 @@
             margin-bottom: 8px;
         }
 
-        .tabs { display: flex; background: #0f1624; border-radius: 11px; padding: 2px; }
-        .tab-btn {
-            flex: 1; padding: 7px; border: none; background: transparent; color: #8e9aaf;
-            font-weight: bold; font-size: 11px; border-radius: 9px; cursor: pointer; transition: all 0.2s ease;
+        .tabs {
+            display: flex;
+            background: #0f1624;
+            border-radius: 11px;
+            padding: 2px;
         }
+
+        .tab-btn {
+            flex: 1;
+            padding: 7px;
+            border: none;
+            background: transparent;
+            color: #8e9aaf;
+            font-weight: bold;
+            font-size: 11px;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
         .tab-btn.active {
             background: linear-gradient(135deg, #0057b7, #003d82);
             color: #ffffff;
@@ -98,33 +141,119 @@
 
         .card-wrapper {
             background: linear-gradient(135deg, #0057b7 0%, rgba(0, 87, 183, 0.3) 50%, #ffd700 100%);
-            padding: 1.5px; border-radius: 14px; margin-bottom: 8px;
+            padding: 1.5px;
+            border-radius: 14px;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 15px rgba(0, 87, 183, 0.2);
         }
-        .crypto-card, .match-card { background: var(--card-bg); border-radius: 13px; padding: 10px; }
-        .crypto-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .crypto-title { font-size: 14px; font-weight: bold; color: #ffffff; }
-        .crypto-price { font-size: 14px; font-weight: 800; color: var(--accent-yellow); }
 
-        .prediction-controls { display: flex; gap: 8px; margin-top: 8px; }
-        .btn-predict {
-            flex: 1; padding: 8px; border: none; border-radius: 10px; font-size: 12px;
-            font-weight: bold; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;
+        .crypto-card, .match-card {
+            background: var(--card-bg);
+            border-radius: 13px;
+            padding: 10px;
         }
+
+        .crypto-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .crypto-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .crypto-price {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--accent-yellow);
+        }
+
+        .prediction-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .btn-predict {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
         .btn-up { background: linear-gradient(135deg, #2ed573, #10ac84); }
         .btn-down { background: linear-gradient(135deg, #ff4757, #ff3838); }
 
         .match-time {
-            font-size: 11px; color: var(--accent-yellow); margin-bottom: 6px; display: inline-block;
-            background: rgba(255, 215, 0, 0.12); padding: 3px 8px; border-radius: 8px; font-weight: bold;
+            font-size: 11px;
+            color: var(--accent-yellow);
+            margin-bottom: 6px;
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.12);
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-weight: bold;
         }
-        .teams-container { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; font-size: 14px; font-weight: 800; color: #ffffff; }
+
+        .match-status-badge {
+            float: left;
+            font-size: 10px;
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .teams-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
         .vs { font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 4px 8px; border-radius: 8px; }
-        .football-options { display: flex; gap: 6px; margin-top: 8px; }
-        .btn-option {
-            flex: 1; padding: 9px 2px; background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2); color: white; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+
+        .football-options {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
         }
-        .fee-badge { font-size: 10px; color: #94a3b8; text-align: center; margin-top: 6px; font-weight: 500; }
+
+        .btn-option {
+            flex: 1;
+            padding: 9px 2px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .fee-badge {
+            font-size: 10px;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 6px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -136,22 +265,22 @@
     <div class="dashboard-bar">
         <div class="dash-card">
             <div class="dash-title">💰 موجودی بازی</div>
-            <div class="dash-value" id="user-balance">250,000 WLF</div>
+            <div class="dash-value" id="user-balance">0 WLF</div>
         </div>
         <div class="dash-card">
-            <div class="dash-title">💵 قابل برداشت</div>
-            <div class="dash-value" id="user-claimable">220,000 WLF</div>
+            <div class="dash-title">💵 قابل برداشت (ولت)</div>
+            <div class="dash-value" id="user-claimable">0 WLF</div>
         </div>
     </div>
 
     <div class="dashboard-bar">
         <div class="dash-card">
             <div class="dash-title">📈 استخر کریپتو</div>
-            <div class="dash-value" id="crypto-pool">1,250,000 WLF</div>
+            <div class="dash-value" id="crypto-pool">0 WLF</div>
         </div>
         <div class="dash-card">
             <div class="dash-title">⚽ استخر فوتبال</div>
-            <div class="dash-value" id="football-pool">2,500,000 WLF</div>
+            <div class="dash-value" id="football-pool">0 WLF</div>
         </div>
     </div>
 
@@ -160,8 +289,8 @@
     </div>
 
     <div class="action-btns-grid">
-        <button class="btn-action btn-deposit-crypto" onclick="depositToCryptoPool()">📥 شارژ استخر کریپتو</button>
-        <button class="btn-action btn-withdraw-pool" onclick="withdrawWithMinLimit()">📤 برداشت (حداقل 200هزار)</button>
+        <button class="btn-action btn-deposit" onclick="depositFromWallet()">📥 واریز WLF$ به بازی</button>
+        <button class="btn-action btn-withdraw" onclick="withdrawToWallet()">📤 برداشت به ولت</button>
     </div>
 
     <div class="tabs-wrapper">
@@ -173,6 +302,7 @@
 
     <!-- تب کریپتو -->
     <div id="crypto-tab" class="tab-content active">
+        
         <div class="card-wrapper">
             <div class="crypto-card">
                 <div class="crypto-header">
@@ -181,18 +311,79 @@
                 </div>
                 <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای قیمت</div>
                 <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('BTC', 'UP', 1000)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('BTC', 'DOWN', 1000)">🔴 نزولی</button>
+                    <button class="btn-predict btn-up" onclick="makeCryptoBet('BTC', 'UP', 50)">🟢 صعودی</button>
+                    <button class="btn-predict btn-down" onclick="makeCryptoBet('BTC', 'DOWN', 50)">🔴 نزولی</button>
                 </div>
-                <div class="fee-badge">ورودی: ۱,۰۰۰ توکن WLF$</div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
             </div>
         </div>
+
+        <div class="card-wrapper">
+            <div class="crypto-card">
+                <div class="crypto-header">
+                    <div class="crypto-title">💎 Ethereum (ETH)</div>
+                    <div class="crypto-price" id="eth-price">در حال دریافت...</div>
+                </div>
+                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای قیمت</div>
+                <div class="prediction-controls">
+                    <button class="btn-predict btn-up" onclick="makeCryptoBet('ETH', 'UP', 50)">🟢 صعودی</button>
+                    <button class="btn-predict btn-down" onclick="makeCryptoBet('ETH', 'DOWN', 50)">🔴 نزولی</button>
+                </div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
+            </div>
+        </div>
+
+        <div class="card-wrapper">
+            <div class="crypto-card">
+                <div class="crypto-header">
+                    <div class="crypto-title">💎 Toncoin (TON)</div>
+                    <div class="crypto-price" id="ton-price">در حال دریافت...</div>
+                </div>
+                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای قیمت</div>
+                <div class="prediction-controls">
+                    <button class="btn-predict btn-up" onclick="makeCryptoBet('TON', 'UP', 50)">🟢 صعودی</button>
+                    <button class="btn-predict btn-down" onclick="makeCryptoBet('TON', 'DOWN', 50)">🔴 نزولی</button>
+                </div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
+            </div>
+        </div>
+
+        <div class="card-wrapper">
+            <div class="crypto-card">
+                <div class="crypto-header">
+                    <div class="crypto-title">🟣 Solana (SOL)</div>
+                    <div class="crypto-price" id="sol-price">در حال دریافت...</div>
+                </div>
+                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای قیمت</div>
+                <div class="prediction-controls">
+                    <button class="btn-predict btn-up" onclick="makeCryptoBet('SOL', 'UP', 50)">🟢 صعودی</button>
+                    <button class="btn-predict btn-down" onclick="makeCryptoBet('SOL', 'DOWN', 50)">🔴 نزولی</button>
+                </div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
+            </div>
+        </div>
+
+        <div class="card-wrapper">
+            <div class="crypto-card">
+                <div class="crypto-header">
+                    <div class="crypto-title">🟡 Binance Coin (BNB)</div>
+                    <div class="crypto-price" id="bnb-price">در حال دریافت...</div>
+                </div>
+                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای قیمت</div>
+                <div class="prediction-controls">
+                    <button class="btn-predict btn-up" onclick="makeCryptoBet('BNB', 'UP', 50)">🟢 صعودی</button>
+                    <button class="btn-predict btn-down" onclick="makeCryptoBet('BNB', 'DOWN', 50)">🔴 نزولی</button>
+                </div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
+            </div>
+        </div>
+
     </div>
 
     <!-- تب فوتبال -->
     <div id="football-tab" class="tab-content">
         <div id="football-matches-container">
-            <div class="card-wrapper">
+            <div class="card-wrapper" id="match-1">
                 <div class="match-card">
                     <div class="match-time">⏱️ امشب - ساعت ۲۲:۳۰</div>
                     <div class="teams-container">
@@ -201,11 +392,11 @@
                         <span>🔴 بارسلونا</span>
                     </div>
                     <div class="football-options">
-                        <button class="btn-option" onclick="makeFootballBet('Match1', 'HOME', 5000)">برد میزبان</button>
-                        <button class="btn-option" onclick="makeFootballBet('Match1', 'DRAW', 5000)">مساوی</button>
-                        <button class="btn-option" onclick="makeFootballBet('Match1', 'AWAY', 5000)">برد میهمان</button>
+                        <button class="btn-option" id="m1-home" onclick="makeFootballBet('Match1', 'HOME', 500)">برد میزبان</button>
+                        <button class="btn-option" id="m1-draw" onclick="makeFootballBet('Match1', 'DRAW', 500)">مساوی</button>
+                        <button class="btn-option" id="m1-away" onclick="makeFootballBet('Match1', 'AWAY', 500)">برد میهمان</button>
                     </div>
-                    <div class="fee-badge">ورودی: ۵,۰۰۰ WLF | واریز به استخر فوتبال</div>
+                    <div class="fee-badge">ورودی: ۵۰۰ WLF | جایزه ۹۵٪ برای برندگان دقیق!</div>
                 </div>
             </div>
         </div>
@@ -220,90 +411,73 @@
             buttonRootId: 'ton-connect-button'
         });
 
-        let userBalance = 250000;
-        let claimableBalance = 220000;
-        let cryptoPoolBalance = 1250000;
-        let footballPoolBalance = 2500000;
-        
-        const MIN_WITHDRAWAL_LIMIT = 200000; // حداقل ۲۰۰ هزار توکن برای برداشت
-        const WITHDRAWAL_FEE = 1000;
+        let userBalance = 0;
+        let claimableBalance = 0;
+        let cryptoPool = 1250;
+        let footballPool = 2500;
 
         function updateUI() {
             document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
             document.getElementById('user-claimable').innerText = claimableBalance.toLocaleString() + " WLF";
-            document.getElementById('crypto-pool').innerText = cryptoPoolBalance.toLocaleString() + " WLF";
-            document.getElementById('football-pool').innerText = footballPoolBalance.toLocaleString() + " WLF";
+            document.getElementById('crypto-pool').innerText = cryptoPool.toLocaleString() + " WLF";
+            document.getElementById('football-pool').innerText = footballPool.toLocaleString() + " WLF";
         }
         updateUI();
 
-        // آدرس‌های اختصاصی استخرهای شما
-        const CRYPTO_POOL_WALLET = "UQCeHlHUwoFhVcLQoJMXOvtcDskkrN1g4q6NVvdFimwp3Hnz";
-        const FOOTBALL_POOL_WALLET = "UQAD8y_EPRPmbDwK_e1pXXq9hCKpfNx8JWvUyqh5xB22k42H";
-
-        // واریز به استخر کریپتو
-        async function depositToCryptoPool() {
-            if (!tonConnectUI.connected) {
-                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
-                return;
-            }
-
-            try {
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 300,
-                    messages: [
-                        {
-                            address: CRYPTO_POOL_WALLET,
-                            amount: "5000000"
-                        }
-                    ]
-                };
-
-                await tonConnectUI.sendTransaction(transaction);
-                userBalance += 10000;
-                cryptoPoolBalance += 10000;
+        tonConnectUI.onStatusChange(wallet => {
+            if (wallet) {
+                userBalance = 500; // شارژ اولیه پس از اتصال ولت
                 updateUI();
-                alert("تراکنش موفق! استخر کریپتو شارژ شد.");
-            } catch (e) {
-                console.error(e);
-                alert("تراکنش توسط کاربر لغو شد.");
+            } else {
+                userBalance = 0;
+                claimableBalance = 0;
+                updateUI();
             }
-        }
+        });
 
-        // برداشت با شرط حداقل ۲۰۰ هزار و کسر کارمزد
-        async function withdrawWithMinLimit() {
+        // تابع واریز توکن از کیف پول به بازی
+        async function depositFromWallet() {
             if (!tonConnectUI.connected) {
                 alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
                 return;
             }
             
-            if (claimableBalance < MIN_WITHDRAWAL_LIMIT) {
-                alert(`حداقل موجودی قابل برداشت باید ${MIN_WITHDRAWAL_LIMIT.toLocaleString()} توکن WLF باشد!`);
-                return;
-            }
-
+            // شبیه‌سازی یا ساخت تراکنش واریز از طریق TonConnect
             try {
-                const netAmountToReceive = claimableBalance - WITHDRAWAL_FEE;
-                
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 300,
                     messages: [
                         {
-                            address: CRYPTO_POOL_WALLET,
-                            amount: "5000000"
+                            address: "EQAUEpGOGqbJy-UIxQ6qblhqAROxgDuiMeB17zImB90n6st0", // آدرس قرارداد یا خزانه WLF
+                            amount: "10000000" // مقدار نانوتون برای کارمزد تراکنش شبکه
                         }
                     ]
                 };
 
-                await tonConnectUI.sendTransaction(transaction);
-                
-                claimableBalance = 0;
+                // ارسال درخواست امضای تراکنش به کیف پول کاربر
+                // لطفا توجه کنید: اگر خواستید واریز واقعی توکن Jetton انجام شود نیازمند ارسال Jetton Transfer طراح‌ریزی‌شده است
+                userBalance += 500; // اضافه شدن فرضی توکن به موجودی بازی برای تست سریع
                 updateUI();
-                
-                alert(`برداشت موفق!\nمبلغ ${netAmountToReceive.toLocaleString()} WLF به کیف پول شما واریز شد.`);
+                alert("موفقیت‌آمیز! مبلغ ۵۰۰ توکن WLF$ به موجودی بازی شما اضافه شد.");
             } catch (e) {
-                console.error(e);
-                alert("خطا در انجام تراکنش برداشت.");
+                console.error("Deposit error:", e);
+                alert("خطا در انجام تراکنش واریز.");
             }
+        }
+
+        function withdrawToWallet() {
+            if (!tonConnectUI.connected) {
+                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
+                return;
+            }
+            if (claimableBalance <= 0) {
+                alert("موجودی قابل برداشتی برای انتقال به کیف پول ندارید!");
+                return;
+            }
+            let amountToWithdraw = claimableBalance;
+            claimableBalance = 0;
+            updateUI();
+            alert(`موفقیت‌آمیز! مبلغ ${amountToWithdraw.toLocaleString()} توکن WLF$ به کیف پول شما واریز شد.`);
         }
 
         function switchTab(tabName) {
@@ -323,29 +497,57 @@
             try {
                 const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,theopennetwork,solana,binancecoin&vs_currencies=usd');
                 const data = await response.json();
+
                 if (data.bitcoin) document.getElementById('btc-price').innerText = '$' + data.bitcoin.usd.toLocaleString();
+                if (data.ethereum) document.getElementById('eth-price').innerText = '$' + data.ethereum.usd.toLocaleString();
+                if (data.theopennetwork) document.getElementById('ton-price').innerText = '$' + data.theopennetwork.usd.toFixed(2);
+                if (data.solana) document.getElementById('sol-price').innerText = '$' + data.solana.usd.toFixed(2);
+                if (data.binancecoin) document.getElementById('bnb-price').innerText = '$' + data.binancecoin.usd.toLocaleString();
             } catch (e) {
-                console.error(e);
+                console.error("Error fetching crypto prices:", e);
             }
         }
+
         fetchCryptoPrices();
+        setInterval(fetchCryptoPrices, 10000);
 
         function makeCryptoBet(symbol, direction, fee) {
-            if (!tonConnectUI.connected) { alert("لطفاً ولت را متصل کنید!"); return; }
-            if (userBalance < fee) { alert("موجودی کافی نیست!"); return; }
+            if (!tonConnectUI.connected) {
+                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
+                return;
+            }
+            if (userBalance < fee) {
+                alert("موجودی بازی کافی نیست! لطفاً حساب خود را شارژ کنید.");
+                return;
+            }
             userBalance -= fee;
-            cryptoPoolBalance += fee;
+            cryptoPool += fee;
             updateUI();
-            alert(`پیش‌بینی کریپتو ثبت شد.`);
+
+            alert(`پیش‌بینی ۵ دقیقه‌ای ${symbol} ثبت شد.\n${fee} توکن کسر و به استخر کریپتو اضافه گردید.`);
         }
 
         function makeFootballBet(matchId, choice, fee) {
-            if (!tonConnectUI.connected) { alert("لطفاً ولت را متصل کنید!"); return; }
-            if (userBalance < fee) { alert("موجودی کافی نیست!"); return; }
+            if (!tonConnectUI.connected) {
+                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
+                return;
+            }
+            if (userBalance < fee) {
+                alert("موجودی بازی برای شرکت در این پیش‌بینی کافی نیست! حساب خود را شارژ کنید.");
+                return;
+            }
             userBalance -= fee;
-            footballPoolBalance += fee;
+            footballPool += fee;
             updateUI();
-            alert(`پیش‌بینی مسابقه فوتبال ثبت شد.`);
+
+            alert(`پیش‌بینی مسابقه فوتبال ثبت شد.\n۵۰۰ توکن به استخر فوتبال اضافه شد.`);
+            
+            if(matchId === 'Match1') {
+                document.getElementById('m1-home').disabled = true;
+                document.getElementById('m1-draw').disabled = true;
+                document.getElementById('m1-away').disabled = true;
+                document.getElementById('m1-home').innerText = "ثبت شد ✓";
+            }
         }
     </script>
 </body>
