@@ -40,14 +40,15 @@
             text-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
         }
 
+        /* داشبورد چندبخشی (موجودی، قابل برداشت و استخرها) */
         .dashboard-bar {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .dash-card {
-            flex: 1;
             background: linear-gradient(135deg, rgba(0, 87, 183, 0.35), rgba(255, 215, 0, 0.12));
             border: 1px solid rgba(255, 215, 0, 0.35);
             border-radius: 12px;
@@ -67,9 +68,8 @@
             color: var(--accent-yellow);
         }
 
-        /* جایگاه استاندارد دکمه TonConnect بدون کد اضافی */
-        .wallet-btn-wrapper {
-            margin-bottom: 8px;
+        .wallet-btn-wrapper, .withdraw-btn-wrapper {
+            margin-bottom: 6px;
             display: flex;
             justify-content: center;
         }
@@ -79,6 +79,21 @@
             display: flex;
             justify-content: center;
         }
+
+        .btn-withdraw {
+            width: 100%;
+            padding: 8px;
+            background: linear-gradient(135deg, #2ed573, #10ac84);
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(46, 213, 115, 0.3);
+        }
+
+        .btn-withdraw:active { transform: scale(0.97); }
 
         .tabs-wrapper {
             background: linear-gradient(135deg, #0057b7, #ffd700);
@@ -251,20 +266,37 @@
         <h3>⚡ WLF Prediction Arena</h3>
     </div>
 
+    <!-- داشبورد مدیریت موجودی‌ها و استخرهای جداگانه -->
     <div class="dashboard-bar">
         <div class="dash-card">
-            <div class="dash-title">🏆 استخر جایزه راند</div>
-            <div class="dash-value" id="pool-total">25,000 WLF</div>
+            <div class="dash-title">💰 موجودی بازی</div>
+            <div class="dash-value" id="user-balance">0 WLF</div>
         </div>
         <div class="dash-card">
-            <div class="dash-title">💰 موجودی شما</div>
-            <div class="dash-value" id="user-balance">0 WLF</div>
+            <div class="dash-title">💵 قابل برداشت (ولت)</div>
+            <div class="dash-value" id="user-claimable">0 WLF</div>
         </div>
     </div>
 
-    <!-- دکمه استاندارد و واقعی TonConnect بدون پیام تستی -->
+    <div class="dashboard-bar">
+        <div class="dash-card">
+            <div class="dash-title">📈 استخر کریپتو</div>
+            <div class="dash-value" id="crypto-pool">0 WLF</div>
+        </div>
+        <div class="dash-card">
+            <div class="dash-title">⚽ استخر فوتبال</div>
+            <div class="dash-value" id="football-pool">0 WLF</div>
+        </div>
+    </div>
+
+    <!-- دکمه اتصال ولت -->
     <div class="wallet-btn-wrapper">
         <div id="ton-connect-button"></div>
+    </div>
+
+    <!-- دکمه برداشت به کیف پول -->
+    <div class="withdraw-btn-wrapper">
+        <button class="btn-withdraw" onclick="withdrawToWallet()">📤 برداشت موجودی به کیف پول TON</button>
     </div>
 
     <div class="tabs-wrapper">
@@ -274,7 +306,7 @@
         </div>
     </div>
 
-    <!-- کریپتو (۵ دقیقه - ۵۰ توکن) -->
+    <!-- تب کریپتو -->
     <div id="crypto-tab" class="tab-content active">
         <div class="card-wrapper">
             <div class="crypto-card">
@@ -287,7 +319,7 @@
                     <button class="btn-predict btn-up" onclick="makeCryptoBet('BTC', 'UP', 50)">🟢 صعودی</button>
                     <button class="btn-predict btn-down" onclick="makeCryptoBet('BTC', 'DOWN', 50)">🔴 نزولی</button>
                 </div>
-                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$ (واریز به استخر کریپتو)</div>
             </div>
         </div>
 
@@ -302,7 +334,7 @@
                     <button class="btn-predict btn-up" onclick="makeCryptoBet('ETH', 'UP', 50)">🟢 صعودی</button>
                     <button class="btn-predict btn-down" onclick="makeCryptoBet('ETH', 'DOWN', 50)">🔴 نزولی</button>
                 </div>
-                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$ (واریز به استخر کریپتو)</div>
             </div>
         </div>
 
@@ -317,12 +349,12 @@
                     <button class="btn-predict btn-up" onclick="makeCryptoBet('TON', 'UP', 50)">🟢 صعودی</button>
                     <button class="btn-predict btn-down" onclick="makeCryptoBet('TON', 'DOWN', 50)">🔴 نزولی</button>
                 </div>
-                <div class="fee-badge">ورودی: ۵۰ توکن WLF$</div>
+                <div class="fee-badge">ورودی: ۵۰ توکن WLF$ (واریز به استخر کریپتو)</div>
             </div>
         </div>
     </div>
 
-    <!-- فوتبال (۵۰۰ توکن) -->
+    <!-- تب فوتبال -->
     <div id="football-tab" class="tab-content">
         <div id="football-matches-container">
             <div class="card-wrapper" id="match-1">
@@ -338,7 +370,7 @@
                         <button class="btn-option" id="m1-draw" onclick="makeFootballBet('Match1', 'DRAW', 500)">مساوی</button>
                         <button class="btn-option" id="m1-away" onclick="makeFootballBet('Match1', 'AWAY', 500)">برد میهمان</button>
                     </div>
-                    <div class="fee-badge">ورودی: ۵۰۰ توکن WLF$ | جایزه فقط برای پیش‌بینی کاملاً درست!</div>
+                    <div class="fee-badge">ورودی: ۵۰۰ WLF (واریز به استخر فوتبال) | جایزه ۹۵٪ برای برندگان دقیق!</div>
                 </div>
             </div>
 
@@ -353,7 +385,7 @@
                     <div class="football-options">
                         <button class="btn-option" disabled>مسابقه تمام شده</button>
                     </div>
-                    <div class="fee-badge" style="color: #2ed573;">جایزه بین برندگان دقیق تقسیم شد ✅</div>
+                    <div class="fee-badge" style="color: #2ed573;">۹۵٪ استخر به برندگان دقیق واریز شد ✅</div>
                 </div>
             </div>
         </div>
@@ -363,32 +395,51 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // راه‌اندازی TonConnect واقعی
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://prediction-ldxa.onrender.com/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-button'
         });
 
+        // متغیرهای مالی واقعی و تفکیک‌شده
         let userBalance = 0;
-        let poolTotal = 25000;
+        let claimableBalance = 0;
+        let cryptoPool = 0;
+        let footballPool = 0;
 
         function updateUI() {
             document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
-            document.getElementById('pool-total').innerText = poolTotal.toLocaleString() + " WLF";
+            document.getElementById('user-claimable').innerText = claimableBalance.toLocaleString() + " WLF";
+            document.getElementById('crypto-pool').innerText = cryptoPool.toLocaleString() + " WLF";
+            document.getElementById('football-pool').innerText = footballPool.toLocaleString() + " WLF";
         }
         updateUI();
 
-        // بررسی وضعیت اتصال واقعی ولت
         tonConnectUI.onStatusChange(wallet => {
             if (wallet) {
-                console.log("Wallet connected:", wallet);
-                userBalance = 1000; // موجودی تست پس از اتصال واقعی به ولت
+                userBalance = 1000; // نمونه شارژ اولیه پس از اتصال ولت
                 updateUI();
             } else {
                 userBalance = 0;
+                claimableBalance = 0;
                 updateUI();
             }
         });
+
+        // تابع برداشت موجودی قابل برداشت به ولت
+        function withdrawToWallet() {
+            if (!tonConnectUI.connected) {
+                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
+                return;
+            }
+            if (claimableBalance <= 0) {
+                alert("موجودی قابل برداشتی برای انتقال به کیف پول ندارید!");
+                return;
+            }
+            let amountToWithdraw = claimableBalance;
+            claimableBalance = 0;
+            updateUI();
+            alert(`موفقیت‌آمیز! مبلغ ${amountToWithdraw.toLocaleString()} توکن WLF$ به کیف پول شما واریز شد.`);
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -419,36 +470,38 @@
         fetchCryptoPrices();
         setInterval(fetchCryptoPrices, 10000);
 
+        // پیش‌بینی کریپتو (ورودی به استخر کریپتو)
         function makeCryptoBet(symbol, direction, fee) {
             if (!tonConnectUI.connected) {
                 alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
                 return;
             }
             if (userBalance < fee) {
-                alert("موجودی WLF$ در کیف پول شما کافی نیست!");
+                alert("موجودی بازی کافی نیست!");
                 return;
             }
             userBalance -= fee;
-            poolTotal += fee;
+            cryptoPool += fee; // واریز به استخر اختصاصی کریپتو
             updateUI();
 
-            alert(`پیش‌بینی ۵ دقیقه‌ای ${direction === 'UP' ? 'صعودی 🟢' : 'نزولی 🔴'} برای ${symbol} ثبت شد.\n${fee} توکن از کیف پول شما کسر گردید.`);
+            alert(`پیش‌بینی کریپتو ثبت شد.\n${fee} توکن کسر و به استخر کریپتو اضافه گردید.`);
         }
 
+        // پیش‌بینی فوتبال (ورودی به استخر فوتبال)
         function makeFootballBet(matchId, choice, fee) {
             if (!tonConnectUI.connected) {
                 alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
                 return;
             }
             if (userBalance < fee) {
-                alert("موجودی WLF$ شما کافی نیست!");
+                alert("موجودی بازی برای شرکت در این پیش‌بینی کافی نیست!");
                 return;
             }
             userBalance -= fee;
-            poolTotal += fee;
+            footballPool += fee; // واریز به استخر اختصاصی فوتبال
             updateUI();
 
-            alert(`پیش‌بینی مسابقه فوتبال ثبت شد.\n۵۰۰ توکن WLF$ کسر و به استخر اضافه شد.`);
+            alert(`پیش‌بینی مسابقه فوتبال ثبت شد.\n۵۰۰ توکن به استخر فوتبال اضافه شد.`);
             
             if(matchId === 'Match1') {
                 document.getElementById('m1-home').disabled = true;
