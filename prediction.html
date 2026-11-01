@@ -222,13 +222,17 @@
 
         let userBalance = 250000;
         let claimableBalance = 220000;
+        let cryptoPoolBalance = 1250000;
+        let footballPoolBalance = 2500000;
         
         const MIN_WITHDRAWAL_LIMIT = 200000; // حداقل ۲۰۰ هزار توکن برای برداشت
-        const WITHDRAWAL_FEE = 1000; // کارمزد شبکه کسر شده از توکن کاربر
+        const WITHDRAWAL_FEE = 1000;
 
         function updateUI() {
             document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
             document.getElementById('user-claimable').innerText = claimableBalance.toLocaleString() + " WLF";
+            document.getElementById('crypto-pool').innerText = cryptoPoolBalance.toLocaleString() + " WLF";
+            document.getElementById('football-pool').innerText = footballPoolBalance.toLocaleString() + " WLF";
         }
         updateUI();
 
@@ -256,6 +260,7 @@
 
                 await tonConnectUI.sendTransaction(transaction);
                 userBalance += 10000;
+                cryptoPoolBalance += 10000;
                 updateUI();
                 alert("تراکنش موفق! استخر کریپتو شارژ شد.");
             } catch (e) {
@@ -264,16 +269,15 @@
             }
         }
 
-        // بررسی حداقل موجودی (۲۰۰ هزار) و برداشت با کسر کارمزد
+        // برداشت با شرط حداقل ۲۰۰ هزار و کسر کارمزد
         async function withdrawWithMinLimit() {
             if (!tonConnectUI.connected) {
                 alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
                 return;
             }
             
-            // شرط حداقل ۲۰۰,۰۰۰ توکن
             if (claimableBalance < MIN_WITHDRAWAL_LIMIT) {
-                alert(`حداقل موجودی قابل برداشت باید ${MIN_WITHDRAWAL_LIMIT.toLocaleString()} توکن WLF باشد! موجودی فعلی شما کافی نیست.`);
+                alert(`حداقل موجودی قابل برداشت باید ${MIN_WITHDRAWAL_LIMIT.toLocaleString()} توکن WLF باشد!`);
                 return;
             }
 
@@ -285,7 +289,7 @@
                     messages: [
                         {
                             address: CRYPTO_POOL_WALLET,
-                            amount: "5000000" // کارمزد TON پرداختی از سمت استخر
+                            amount: "5000000"
                         }
                     ]
                 };
@@ -295,7 +299,7 @@
                 claimableBalance = 0;
                 updateUI();
                 
-                alert(`برداشت موفق!\nمبلغ ${netAmountToReceive.toLocaleString()} WLF (پس از کسر کارمزد شبکه) به کیف پول شما واریز شد.`);
+                alert(`برداشت موفق!\nمبلغ ${netAmountToReceive.toLocaleString()} WLF به کیف پول شما واریز شد.`);
             } catch (e) {
                 console.error(e);
                 alert("خطا در انجام تراکنش برداشت.");
@@ -330,6 +334,7 @@
             if (!tonConnectUI.connected) { alert("لطفاً ولت را متصل کنید!"); return; }
             if (userBalance < fee) { alert("موجودی کافی نیست!"); return; }
             userBalance -= fee;
+            cryptoPoolBalance += fee;
             updateUI();
             alert(`پیش‌بینی کریپتو ثبت شد.`);
         }
@@ -338,6 +343,7 @@
             if (!tonConnectUI.connected) { alert("لطفاً ولت را متصل کنید!"); return; }
             if (userBalance < fee) { alert("موجودی کافی نیست!"); return; }
             userBalance -= fee;
+            footballPoolBalance += fee;
             updateUI();
             alert(`پیش‌بینی مسابقه فوتبال ثبت شد.`);
         }
