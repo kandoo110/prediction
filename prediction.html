@@ -39,7 +39,7 @@
             text-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
         }
 
-        /* داشبورد فشرده و فیت */
+        /* داشبورد فشرده و فیت موبایل */
         .dashboard-bar {
             display: flex;
             gap: 6px;
@@ -67,26 +67,26 @@
             color: var(--accent-yellow);
         }
 
-        /* دکمه واریز آزاد بدون عدد ثابت */
-        .deposit-btn-wrapper {
+        /* دکمه اتصال کیف پول واقعی */
+        .wallet-btn-wrapper {
             margin-bottom: 8px;
         }
 
-        .btn-deposit {
+        .btn-wallet {
             width: 100%;
             padding: 9px;
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            border: none;
+            background: linear-gradient(135deg, #0088cc, #005580);
+            border: 1px solid rgba(255, 215, 0, 0.4);
             border-radius: 12px;
             font-size: 13px;
             font-weight: 800;
-            color: #0b0e14;
+            color: #ffffff;
             cursor: pointer;
-            box-shadow: 0 3px 12px rgba(255, 215, 0, 0.25);
+            box-shadow: 0 3px 12px rgba(0, 136, 204, 0.3);
             transition: transform 0.1s;
         }
 
-        .btn-deposit:active { transform: scale(0.97); }
+        .btn-wallet:active { transform: scale(0.97); }
 
         .tabs-wrapper {
             background: linear-gradient(135deg, #0057b7, #ffd700);
@@ -262,7 +262,7 @@
     <div class="dashboard-bar">
         <div class="dash-card">
             <div class="dash-title">🏆 استخر جایزه راند</div>
-            <div class="dash-value" id="pool-total">0 WLF</div>
+            <div class="dash-value" id="pool-total">25,000 WLF</div>
         </div>
         <div class="dash-card">
             <div class="dash-title">💰 موجودی شما</div>
@@ -270,9 +270,9 @@
         </div>
     </div>
 
-    <!-- دکمه واریز آزاد بدون محدودیت عددی -->
-    <div class="deposit-btn-wrapper">
-        <button class="btn-deposit" onclick="depositTokens()">+ واریز توکن WLF$ به حساب</button>
+    <!-- دکمه اتصال کیف پول واقعی -->
+    <div class="wallet-btn-wrapper">
+        <button class="btn-wallet" id="wallet-btn" onclick="connectWallet()">🔗 اتصال کیف پول TON (Tonkeeper)</button>
     </div>
 
     <div class="tabs-wrapper">
@@ -371,21 +371,16 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let userBalance = localStorage.getItem('wlf_user_balance');
+        // موجودی واقعی کاربر (پیش‌فرض صفر تا زمانی که کیف پول متصل و موجودی خوانده شود)
+        let userBalance = localStorage.getItem('wlf_real_balance');
         if (userBalance === null) {
-            userBalance = 1000;
-            localStorage.setItem('wlf_user_balance', userBalance);
+            userBalance = 0; 
+            localStorage.setItem('wlf_real_balance', userBalance);
         } else {
             userBalance = parseInt(userBalance);
         }
 
-        let poolTotal = localStorage.getItem('wlf_pool_total');
-        if (poolTotal === null) {
-            poolTotal = 25000;
-            localStorage.setItem('wlf_pool_total', poolTotal);
-        } else {
-            poolTotal = parseInt(poolTotal);
-        }
+        let poolTotal = 25000;
 
         function updateUI() {
             document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
@@ -393,20 +388,16 @@
         }
         updateUI();
 
-        // تابع واریز آزاد توکن بدون محدودیت عددی
-        function depositTokens() {
-            let input = prompt("مقدار توکن WLF$ که می‌خواهید به حساب واریز کنید را وارد نمایید:", "500");
-            if (input !== null) {
-                let amount = parseInt(input);
-                if (!isNaN(amount) && amount > 0) {
-                    userBalance += amount;
-                    localStorage.setItem('wlf_user_balance', userBalance);
-                    updateUI();
-                    alert(`${amount.toLocaleString()} توکن WLF$ با موفقیت به حساب شما واریز شد!`);
-                } else {
-                    alert("لطفاً یک عدد معتبر وارد کنید.");
-                }
-            }
+        // تابع اتصال به کیف پول واقعی
+        function connectWallet() {
+            // در اینجا ساختار استاندارد اتصال ولت TON قرار می‌گیرد
+            alert("در حال اتصال به کیف پول TON...\n(پس از راه‌اندازی کامل TonConnect روی سرور، موجودی واقعی توکن‌های WLF$ شما از بلاکچین خوانده خواهد شد)");
+            
+            // شبیه‌سازی اتصال موفق برای تست ظاهر کار (می‌توانید بعداً با پکیج TonConnect جایگزین کنید)
+            setTimeout(() => {
+                document.getElementById('wallet-btn').innerText = "✅ متصل: EQAUE...90n6st0";
+                document.getElementById('wallet-btn').style.background = "linear-gradient(135deg, #2ed573, #10ac84)";
+            }, 1000);
         }
 
         function switchTab(tabName) {
@@ -440,14 +431,13 @@
 
         function makeCryptoBet(symbol, direction, fee) {
             if (userBalance < fee) {
-                alert("موجودی WLF$ شما کافی نیست! از دکمه 'واریز توکن' حساب خود را شارژ کنید.");
+                alert("موجودی WLF$ شما در کیف پول کافی نیست! ابتدا کیف پول خود را متصل کرده و توکن شارژ کنید.");
                 return;
             }
             userBalance -= fee;
             poolTotal += fee;
 
-            localStorage.setItem('wlf_user_balance', userBalance);
-            localStorage.setItem('wlf_pool_total', poolTotal);
+            localStorage.setItem('wlf_real_balance', userBalance);
             updateUI();
 
             alert(`پیش‌بینی ۵ دقیقه‌ای ${direction === 'UP' ? 'صعودی 🟢' : 'نزولی 🔴'} برای ${symbol} ثبت شد.\n${fee} توکن WLF$ از حساب شما کسر گردید.`);
@@ -455,17 +445,16 @@
 
         function makeFootballBet(matchId, choice, fee) {
             if (userBalance < fee) {
-                alert("موجودی WLF$ شما کافی نیست! برای شرکت در این پیش‌بینی به ۵۰۰ توکن نیاز دارید.");
+                alert("موجودی WLF$ شما در کیف پول کافی نیست! برای شرکت در این پیش‌بینی به ۵۰۰ توکن نیاز دارید.");
                 return;
             }
             userBalance -= fee;
             poolTotal += fee;
 
-            localStorage.setItem('wlf_user_balance', userBalance);
-            localStorage.setItem('wlf_pool_total', poolTotal);
+            localStorage.setItem('wlf_real_balance', userBalance);
             updateUI();
 
-            alert(`پیش‌بینی مسابقه فوتبال با موفقیت ثبت شد.\n۵۰۰ توکن WLF$ کسر و به استخر اضافه شد.`);
+            alert(`پیش‌بینی مسابقه فوتبال ثبت شد.\n۵۰۰ توکن WLF$ کسر و به استخر اضافه شد.`);
             
             if(matchId === 'Match1') {
                 document.getElementById('m1-home').disabled = true;
