@@ -416,6 +416,10 @@
         let cryptoPool = 1250;
         let footballPool = 2500;
 
+        // آدرس‌های اختصاصی استخرهای شما
+        const CRYPTO_POOL_WALLET = "UQCeHlHUwoFhVcLQoJMXOvtcDskkrN1g4q6NVvdFimwp3Hnz";
+        const FOOTBALL_POOL_WALLET = "UQAD8y_EPRPmbDwK_e1pXXq9hCKpfNx8JWvUyqh5xB22k42H";
+
         function updateUI() {
             document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
             document.getElementById('user-claimable').innerText = claimableBalance.toLocaleString() + " WLF";
@@ -435,33 +439,32 @@
             }
         });
 
-        // تابع واریز توکن از کیف پول به بازی
+        // تابع واریز توکن به استخر کریپتو
         async function depositFromWallet() {
             if (!tonConnectUI.connected) {
                 alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
                 return;
             }
             
-            // شبیه‌سازی یا ساخت تراکنش واریز از طریق TonConnect
             try {
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 300,
                     messages: [
                         {
-                            address: "EQAUEpGOGqbJy-UIxQ6qblhqAROxgDuiMeB17zImB90n6st0", // آدرس قرارداد یا خزانه WLF
+                            address: CRYPTO_POOL_WALLET, // متصل به آدرس استخر کریپتو
                             amount: "10000000" // مقدار نانوتون برای کارمزد تراکنش شبکه
                         }
                     ]
                 };
 
-                // ارسال درخواست امضای تراکنش به کیف پول کاربر
-                // لطفا توجه کنید: اگر خواستید واریز واقعی توکن Jetton انجام شود نیازمند ارسال Jetton Transfer طراح‌ریزی‌شده است
-                userBalance += 500; // اضافه شدن فرضی توکن به موجودی بازی برای تست سریع
+                await tonConnectUI.sendTransaction(transaction);
+                userBalance += 500; 
+                cryptoPool += 500;
                 updateUI();
-                alert("موفقیت‌آمیز! مبلغ ۵۰۰ توکن WLF$ به موجودی بازی شما اضافه شد.");
+                alert("موفقیت‌آمیز! مبلغ ۵۰۰ توکن WLF$ به موجودی بازی شما اضافه شد و استخر شارژ گردید.");
             } catch (e) {
                 console.error("Deposit error:", e);
-                alert("خطا در انجام تراکنش واریز.");
+                alert("خطا یا لغو تراکنش واریز.");
             }
         }
 
