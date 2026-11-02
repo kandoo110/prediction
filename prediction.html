@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WLF Prediction Hub</title>
+    <title>WLF Prediction Arena</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
@@ -16,377 +16,269 @@
             --red: #ff4757;
             --text-color: #ffffff;
         }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 6px 8px;
+            margin: 0; padding: 0; box-sizing: border-box; user-select: none;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .fixed-header-container {
+            background: var(--bg-color);
+            padding: 8px 10px;
+            flex-shrink: 0;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+            z-index: 10;
+        }
+        .header { text-align: center; margin-bottom: 4px; }
+        .header h3 { color: var(--accent-yellow); margin: 2px 0; font-size: 16px; }
+        .dashboard-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 5px; }
+        .dash-card { background: linear-gradient(135deg, rgba(0, 87, 183, 0.35), rgba(255, 215, 0, 0.12)); border: 1px solid rgba(255, 215, 0, 0.35); border-radius: 10px; padding: 5px; text-align: center; }
+        .dash-title { font-size: 9px; color: #94a3b8; margin-bottom: 2px; }
+        .dash-value { font-size: 12px; font-weight: 800; color: var(--accent-yellow); }
+        .wallet-btn-wrapper { margin-bottom: 5px; display: flex; justify-content: center; }
+        #ton-connect-button { width: 100%; display: flex; justify-content: center; }
+        
+        .action-btns-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 5px; }
+        .btn-action { width: 100%; padding: 7px; border: none; border-radius: 9px; font-size: 10px; font-weight: bold; color: white; cursor: pointer; }
+        .btn-deposit-crypto { background: linear-gradient(135deg, #0057b7, #003d82); }
+        .btn-deposit-football { background: linear-gradient(135deg, #2980b9, #16a085); }
+        .btn-withdraw { background: linear-gradient(135deg, #2ed573, #10ac84); grid-column: span 2; }
+        
+        .share-btn-wrapper { margin-bottom: 5px; }
+        .btn-share { width: 100%; padding: 8px; background: linear-gradient(135deg, #0088cc, #005580); border: none; border-radius: 9px; color: white; font-weight: bold; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+        .tabs-wrapper { background: linear-gradient(135deg, #0057b7, #ffd700); padding: 1.5px; border-radius: 10px; margin-top: 2px; }
+        .tabs { display: flex; background: #0f1624; border-radius: 9px; padding: 2px; }
+        .tab-btn { flex: 1; padding: 6px; border: none; background: transparent; color: #8e9aaf; font-weight: bold; font-size: 11px; border-radius: 8px; cursor: pointer; }
+        .tab-btn.active { background: linear-gradient(135deg, #0057b7, #003d82); color: #ffffff; }
+
+        .scrollable-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 8px 10px;
             box-sizing: border-box;
-            user-select: none;
-            overflow-x: hidden;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 6px;
-        }
-
-        .header h3 {
-            color: var(--accent-yellow);
-            margin: 2px 0;
-            font-size: 18px;
-            text-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
-        }
-
-        .dashboard-bar {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-
-        .dash-card {
-            background: linear-gradient(135deg, rgba(0, 87, 183, 0.35), rgba(255, 215, 0, 0.12));
-            border: 1px solid rgba(255, 215, 0, 0.35);
-            border-radius: 12px;
-            padding: 6px;
-            text-align: center;
-        }
-
-        .dash-title {
-            font-size: 10px;
-            color: #94a3b8;
-            margin-bottom: 2px;
-        }
-
-        .dash-value {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--accent-yellow);
-        }
-
-        .wallet-btn-wrapper {
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: center;
-        }
-
-        #ton-connect-button {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        .action-btns-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-
-        .btn-action {
-            width: 100%;
-            padding: 8px;
-            border: none;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        }
-
-        .btn-deposit { background: linear-gradient(135deg, #0057b7, #003d82); border: 1px solid rgba(255,215,0,0.3); }
-        .btn-withdraw { background: linear-gradient(135deg, #2ed573, #10ac84); }
-
-        .btn-action:active { transform: scale(0.97); }
-
-        .tabs-wrapper {
-            background: linear-gradient(135deg, #0057b7, #ffd700);
-            padding: 1.5px;
-            border-radius: 12px;
-            margin-bottom: 8px;
-        }
-
-        .tabs {
-            display: flex;
-            background: #0f1624;
-            border-radius: 11px;
-            padding: 2px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 7px;
-            border: none;
-            background: transparent;
-            color: #8e9aaf;
-            font-weight: bold;
-            font-size: 11px;
-            border-radius: 9px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #0057b7, #003d82);
-            color: #ffffff;
-            border: 1px solid rgba(255, 215, 0, 0.4);
         }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        
+        .card-wrapper { background: linear-gradient(135deg, #0057b7 0%, rgba(0, 87, 183, 0.3) 50%, #ffd700 100%); padding: 1.5px; border-radius: 14px; margin-bottom: 8px; }
+        .crypto-card, .match-card { background: var(--card-bg); border-radius: 13px; padding: 10px; }
+        .crypto-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .crypto-title { font-size: 14px; font-weight: bold; color: #ffffff; }
+        .crypto-price { font-size: 14px; font-weight: 800; color: var(--accent-yellow); }
+        
+        .multiplier-box { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 8px; }
+        .multiplier-box label { font-size: 11px; color: #94a3b8; }
+        .multiplier-input { width: 50px; background: #080b10; border: 1px solid rgba(255,215,0,0.3); color: white; text-align: center; border-radius: 6px; font-size: 12px; padding: 2px; }
 
-        .card-wrapper {
-            background: linear-gradient(135deg, #0057b7 0%, rgba(0, 87, 183, 0.3) 50%, #ffd700 100%);
-            padding: 1.5px;
-            border-radius: 14px;
-            margin-bottom: 8px;
-            box-shadow: 0 4px 15px rgba(0, 87, 183, 0.2);
-        }
-
-        .crypto-card, .match-card {
-            background: var(--card-bg);
-            border-radius: 13px;
-            padding: 10px;
-        }
-
-        .crypto-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .crypto-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: #ffffff;
-        }
-
-        .crypto-price {
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--accent-yellow);
-        }
-
-        .prediction-controls {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .btn-predict {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-
+        .prediction-controls { display: flex; gap: 8px; margin-top: 6px; }
+        .btn-predict { flex: 1; padding: 8px; border: none; border-radius: 10px; font-size: 12px; font-weight: bold; color: white; cursor: pointer; }
+        .btn-predict:disabled, .btn-option:disabled { background: #333 !important; color: #666 !important; cursor: not-allowed; }
         .btn-up { background: linear-gradient(135deg, #2ed573, #10ac84); }
         .btn-down { background: linear-gradient(135deg, #ff4757, #ff3838); }
-
-        .match-time {
-            font-size: 11px;
-            color: var(--accent-yellow);
-            margin-bottom: 6px;
-            display: inline-block;
-            background: rgba(255, 215, 0, 0.12);
-            padding: 3px 8px;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-
-        .teams-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 8px 0;
-            font-size: 14px;
-            font-weight: 800;
-            color: #ffffff;
-        }
-
+        .match-time { font-size: 11px; color: var(--accent-yellow); margin-bottom: 6px; display: inline-block; background: rgba(255, 215, 0, 0.12); padding: 3px 8px; border-radius: 8px; font-weight: bold; }
+        .teams-container { display: flex; justify-content: space-between; align-items: center; margin: 8px 0; font-size: 14px; font-weight: 800; }
         .vs { font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.06); padding: 4px 8px; border-radius: 8px; }
-
-        .football-options {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-        }
-
-        .btn-option {
-            flex: 1;
-            padding: 9px 2px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .fee-badge {
-            font-size: 10px;
-            color: #94a3b8;
-            text-align: center;
-            margin-top: 6px;
-            font-weight: 500;
-        }
+        .football-options { display: flex; gap: 6px; margin-top: 8px; }
+        .btn-option { flex: 1; padding: 9px 2px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: white; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
+        .fee-badge { font-size: 10px; color: #94a3b8; text-align: center; margin-top: 6px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h3>⚡ WLF Prediction Arena</h3>
-    </div>
-
-    <div class="dashboard-bar">
-        <div class="dash-card">
-            <div class="dash-title">💰 موجودی بازی</div>
-            <div class="dash-value" id="user-balance">350,000 WLF</div>
+    <div class="fixed-header-container">
+        <div class="header">
+            <h3>⚡ WLF Prediction Arena</h3>
         </div>
-        <div class="dash-card">
-            <div class="dash-title">💵 قابل برداشت (ولت)</div>
-            <div class="dash-value" id="user-claimable">320,000 WLF</div>
-        </div>
-    </div>
 
-    <div class="dashboard-bar">
-        <div class="dash-card">
-            <div class="dash-title">📈 استخر کریپتو</div>
-            <div class="dash-value" id="crypto-pool">1,500,000 WLF</div>
-        </div>
-        <div class="dash-card">
-            <div class="dash-title">⚽ استخر فوتبال</div>
-            <div class="dash-value" id="football-pool">3,000,000 WLF</div>
-        </div>
-    </div>
-
-    <div class="wallet-btn-wrapper">
-        <div id="ton-connect-button"></div>
-    </div>
-
-    <div class="action-btns-grid">
-        <button class="btn-action btn-deposit" onclick="depositToPool()">📥 واریز WLF$ به بازی</button>
-        <button class="btn-action btn-withdraw" onclick="withdrawFromPool()">📤 برداشت به ولت</button>
-    </div>
-
-    <div class="tabs-wrapper">
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('crypto')">📈 کریپتو (سریع)</button>
-            <button class="tab-btn" onclick="switchTab('football')">⚽ مسابقات فوتبال</button>
-        </div>
-    </div>
-
-    <!-- تب کریپتو -->
-    <div id="crypto-tab" class="tab-content active">
-        
-        <div class="card-wrapper">
-            <div class="crypto-card">
-                <div class="crypto-header">
-                    <div class="crypto-title">🪙 Bitcoin (BTC)</div>
-                    <div class="crypto-price" id="btc-price">در حال دریافت...</div>
-                </div>
-                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای (ضریب ایمن: 1.9x)</div>
-                <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('BTC', 'UP', 1000, 1.9)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('BTC', 'DOWN', 1000, 1.9)">🔴 نزولی</button>
-                </div>
-                <div class="fee-badge">ورودی: ۱,۰۰۰ توکن WLF$</div>
+        <div class="dashboard-bar">
+            <div class="dash-card">
+                <div class="dash-title">💰 Game Balance</div>
+                <div class="dash-value" id="user-balance">0 TON</div>
+            </div>
+            <div class="dash-card">
+                <div class="dash-title">💵 Claimable (Wallet)</div>
+                <div class="dash-value" id="user-claimable">0 TON</div>
             </div>
         </div>
 
-        <div class="card-wrapper">
-            <div class="crypto-card">
-                <div class="crypto-header">
-                    <div class="crypto-title">💎 Ethereum (ETH)</div>
-                    <div class="crypto-price" id="eth-price">در حال دریافت...</div>
-                </div>
-                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای (ضریب ایمن: 1.9x)</div>
-                <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('ETH', 'UP', 1000, 1.9)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('ETH', 'DOWN', 1000, 1.9)">🔴 نزولی</button>
-                </div>
-                <div class="fee-badge">ورودی: ۱,۰۰۰ توکن WLF$</div>
+        <div class="dashboard-bar">
+            <div class="dash-card">
+                <div class="dash-title">📈 Crypto Pool</div>
+                <div class="dash-value" id="crypto-pool">0 TON</div>
+            </div>
+            <div class="dash-card">
+                <div class="dash-title">⚽ Football Pool</div>
+                <div class="dash-value" id="football-pool">0 TON</div>
             </div>
         </div>
 
-        <div class="card-wrapper">
-            <div class="crypto-card">
-                <div class="crypto-header">
-                    <div class="crypto-title">💎 Toncoin (TON)</div>
-                    <div class="crypto-price" id="ton-price">در حال دریافت...</div>
-                </div>
-                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای (ضریب ایمن: 2.0x)</div>
-                <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('TON', 'UP', 1000, 2.0)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('TON', 'DOWN', 1000, 2.0)">🔴 نزولی</button>
-                </div>
-                <div class="fee-badge">ورودی: ۱,۰۰۰ توکن WLF$</div>
-            </div>
+        <div class="wallet-btn-wrapper">
+            <div id="ton-connect-button"></div>
         </div>
 
-        <div class="card-wrapper">
-            <div class="crypto-card">
-                <div class="crypto-header">
-                    <div class="crypto-title">🟣 Solana (SOL)</div>
-                    <div class="crypto-price" id="sol-price">در حال دریافت...</div>
-                </div>
-                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای (ضریب ایمن: 2.0x)</div>
-                <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('SOL', 'UP', 1000, 2.0)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('SOL', 'DOWN', 1000, 2.0)">🔴 نزولی</button>
-                </div>
-                <div class="fee-badge">ورودی: ۱,۰۰۰ توکن WLF$</div>
-            </div>
+        <div class="action-btns-grid">
+            <button class="btn-action btn-deposit-crypto" onclick="depositToPool('crypto')">📥 Deposit Crypto (Flexible)</button>
+            <button class="btn-action btn-deposit-football" onclick="depositToPool('football')">📥 Deposit Football (Flexible)</button>
+            <button class="btn-action btn-withdraw" onclick="withdrawFromPool()">📤 Withdraw to Wallet (Min 1 TON)</button>
         </div>
 
-        <div class="card-wrapper">
-            <div class="crypto-card">
-                <div class="crypto-header">
-                    <div class="crypto-title">🟡 Binance Coin (BNB)</div>
-                    <div class="crypto-price" id="bnb-price">در حال دریافت...</div>
-                </div>
-                <div style="font-size: 11px; color: #94a3b8;">پیش‌بینی ۵ دقیقه‌ای (ضریب ایمن: 2.1x)</div>
-                <div class="prediction-controls">
-                    <button class="btn-predict btn-up" onclick="makeCryptoBet('BNB', 'UP', 1000, 2.1)">🟢 صعودی</button>
-                    <button class="btn-predict btn-down" onclick="makeCryptoBet('BNB', 'DOWN', 1000, 2.1)">🔴 نزولی</button>
-                </div>
-                <div class="fee-badge">ورودی: ۱,۰۰۰ توکن WLF$</div>
-            </div>
+        <div class="share-btn-wrapper">
+            <button class="btn-share" onclick="sharePrediction()">
+                📢 Share Prediction & Invite Friends
+            </button>
         </div>
 
+        <div class="tabs-wrapper">
+            <div classs="tabs" style="display: flex; background: #0f1624; border-radius: 9px; padding: 2px;">
+                <button class="tab-btn active" onclick="switchTab('crypto')">📈 Crypto (Fast)</button>
+                <button class="tab-btn" onclick="switchTab('football')">⚽ Football Matches</button>
+            </div>
+        </div>
     </div>
 
-    <!-- تب فوتبال -->
-    <div id="football-tab" class="tab-content">
-        <div id="football-matches-container">
-            <div class="card-wrapper" id="match-1">
-                <div class="match-card">
-                    <div class="match-time">⏱️ امشب - ساعت ۲۲:۳۰ (ضریب حرفه‌ای: 2.1x)</div>
-                    <div class="teams-container">
-                        <span>🔵 رئال مادرید</span>
-                        <span class="vs">VS</span>
-                        <span>🔴 بارسلونا</span>
+    <div class="scrollable-content">
+        <!-- کریپتو -->
+        <div id="crypto-tab" class="tab-content active">
+            <div class="card-wrapper">
+                <div class="crypto-card">
+                    <div class="crypto-header">
+                        <div class="crypto-title">🪙 Bitcoin (BTC)</div>
+                        <div class="crypto-price" id="btc-price">Loading...</div>
                     </div>
-                    <div class="football-options">
-                        <button class="btn-option" id="m1-home" onclick="makeFootballBet('Match1', 'HOME', 5000, 2.0)">برد میزبان</button>
-                        <button class="btn-option" id="m1-draw" onclick="makeFootballBet('Match1', 'DRAW', 5000, 2.1)">مساوی</button>
-                        <button class="btn-option" id="m1-away" onclick="makeFootballBet('Match1', 'AWAY', 5000, 2.0)">برد میهمان</button>
+                    <div class="multiplier-box">
+                        <label>Units (Min Base 0.01 TON):</label>
+                        <input type="number" id="btc-mult" class="multiplier-input" value="1" min="1" max="50">
                     </div>
-                    <div class="fee-badge">ورودی: ۵,۰۰۰ WLF | مدیریت هوشمند سقف استخر</div>
+                    <div class="prediction-controls">
+                        <button class="btn-predict btn-up" id="btc-up" onclick="makeCryptoBet('BTC', 'UP', 1.8)">🟢 Bullish</button>
+                        <button class="btn-predict btn-down" id="btc-down" onclick="makeCryptoBet('BTC', 'DOWN', 1.8)">🔴 Bearish</button>
+                    </div>
+                    <div class="fee-badge">Min Bet: 0.01 TON (Odds: 1.8x)</div>
+                </div>
+            </div>
+
+            <div class="card-wrapper">
+                <div class="crypto-card">
+                    <div class="crypto-header">
+                        <div class="crypto-title">💎 Ethereum (ETH)</div>
+                        <div class="crypto-price" id="eth-price">Loading...</div>
+                    </div>
+                    <div class="multiplier-box">
+                        <label>Units (Min Base 0.01 TON):</label>
+                        <input type="number" id="eth-mult" class="multiplier-input" value="1" min="1" max="50">
+                    </div>
+                    <div class="prediction-controls">
+                        <button class="btn-predict btn-up" id="eth-up" onclick="makeCryptoBet('ETH', 'UP', 1.8)">🟢 Bullish</button>
+                        <button class="btn-predict btn-down" id="eth-down" onclick="makeCryptoBet('ETH', 'DOWN', 1.8)">🔴 Bearish</button>
+                    </div>
+                    <div class="fee-badge">Min Bet: 0.01 TON (Odds: 1.8x)</div>
+                </div>
+            </div>
+
+            <div class="card-wrapper">
+                <div class="crypto-card">
+                    <div class="crypto-header">
+                        <div class="crypto-title">🟣 Solana (SOL)</div>
+                        <div class="crypto-price" id="sol-price">Loading...</div>
+                    </div>
+                    <div class="multiplier-box">
+                        <label>Units (Min Base 0.01 TON):</label>
+                        <input type="number" id="sol-mult" class="multiplier-input" value="1" min="1" max="50">
+                    </div>
+                    <div class="prediction-controls">
+                        <button class="btn-predict btn-up" id="sol-up" onclick="makeCryptoBet('SOL', 'UP', 1.9)">🟢 Bullish</button>
+                        <button class="btn-predict btn-down" id="sol-down" onclick="makeCryptoBet('SOL', 'DOWN', 1.9)">🔴 Bearish</button>
+                    </div>
+                    <div class="fee-badge">Min Bet: 0.01 TON (Odds: 1.9x)</div>
+                </div>
+            </div>
+
+            <div class="card-wrapper">
+                <div class="crypto-card">
+                    <div class="crypto-header">
+                        <div class="crypto-title">🟡 Binance Coin (BNB)</div>
+                        <div class="crypto-price" id="bnb-price">Loading...</div>
+                    </div>
+                    <div class="multiplier-box">
+                        <label>Units (Min Base 0.01 TON):</label>
+                        <input type="number" id="bnb-mult" class="multiplier-input" value="1" min="1" max="50">
+                    </div>
+                    <div class="prediction-controls">
+                        <button class="btn-predict btn-up" id="bnb-up" onclick="makeCryptoBet('BNB', 'UP', 2.0)">🟢 Bullish</button>
+                        <button class="btn-predict btn-down" id="bnb-down" onclick="makeCryptoBet('BNB', 'DOWN', 2.0)">🔴 Bearish</button>
+                    </div>
+                    <div class="fee-badge">Min Bet: 0.01 TON (Odds: 2.0x)</div>
+                </div>
+            </div>
+
+            <div class="card-wrapper">
+                <div class="crypto-card">
+                    <div class="crypto-header">
+                        <div class="crypto-title">💎 Toncoin (TON)</div>
+                        <div class="crypto-price" id="ton-price">Loading...</div>
+                    </div>
+                    <div class="multiplier-box">
+                        <label>Units (Min Base 0.01 TON):</label>
+                        <input type="number" id="ton-mult" class="multiplier-input" value="1" min="1" max="50">
+                    </div>
+                    <div class="prediction-controls">
+                        <button class="btn-predict btn-up" id="ton-up" onclick="makeCryptoBet('TON', 'UP', 1.9)">🟢 Bullish</button>
+                        <button class="btn-predict btn-down" id="ton-down" onclick="makeCryptoBet('TON', 'DOWN', 1.9)">🔴 Bearish</button>
+                    </div>
+                    <div class="fee-badge">Min Bet: 0.01 TON (Odds: 1.9x)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- فوتبال -->
+        <div id="football-tab" class="tab-content">
+            <div id="football-matches-container">
+                <div class="card-wrapper" id="match-container-Match1">
+                    <div class="match-card">
+                        <div class="match-time" id="m1-time">⏱️ Real Madrid vs Barcelona</div>
+                        <div class="teams-container">
+                            <span>🔵 Real Madrid</span>
+                            <span class="vs">VS</span>
+                            <span>🔴 Barcelona</span>
+                        </div>
+                        <div class="multiplier-box">
+                            <label>Units (Min Base 0.03 TON):</label>
+                            <input type="number" id="match1-mult" class="multiplier-input" value="1" min="1" max="30">
+                        </div>
+                        <div class="football-options">
+                            <button class="btn-option" id="m1-home" onclick="makeFootballBet('Match1', 'HOME', 1.9)">Home Win</button>
+                            <button class="btn-option" id="m1-draw" onclick="makeFootballBet('Match1', 'DRAW', 2.0)">Draw</button>
+                            <button class="btn-option" id="m1-away" onclick="makeFootballBet('Match1', 'AWAY', 1.9)">Away Win</button>
+                        </div>
+                        <div class="fee-badge">Min Bet: 0.03 TON (Secure Odds: 1.9x - 2.0x)</div>
+                    </div>
+                </div>
+
+                <div class="card-wrapper" id="match-container-Match2" style="margin-top: 10px;">
+                    <div class="match-card">
+                        <div class="match-time" id="m2-time">⏱️ Manchester City vs Arsenal</div>
+                        <div class="teams-container">
+                            <span>🔵 Manchester City</span>
+                            <span class="vs">VS</span>
+                            <span>🔴 Arsenal</span>
+                        </div>
+                        <div class="multiplier-box">
+                            <label>Units (Min Base 0.03 TON):</label>
+                            <input type="number" id="match2-mult" class="multiplier-input" value="1" min="1" max="30">
+                        </div>
+                        <div class="football-options">
+                            <button class="btn-option" id="m2-home" onclick="makeFootballBet('Match2', 'HOME', 1.9)">Home Win</button>
+                            <button class="btn-option" id="m2-draw" onclick="makeFootballBet('Match2', 'DRAW', 2.0)">Draw</button>
+                            <button class="btn-option" id="m2-away" onclick="makeFootballBet('Match2', 'AWAY', 1.9)">Away Win</button>
+                        </div>
+                        <div class="fee-badge">Min Bet: 0.03 TON (Secure Odds: 1.9x - 2.0x)</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -397,94 +289,132 @@
         tg.expand();
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://wlf-prediction-api.onrender.com/tonconnect-manifest.json',
+            manifestUrl: 'https://prediction-ldxa.onrender.com/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-button'
         });
 
-        let userBalance = 350000;
-        let claimableBalance = 320000;
-        let cryptoPoolBalance = 1500000;
-        let footballPoolBalance = 3000000;
+        const telegramId = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "guest_123";
+        
+        let serverAddresses = {
+            cryptoTreasury: "UQCeHlHUwoFhVcLQoJMXOvtcDskkrN1g4q6NVvdFimwp3Hnz",
+            footballTreasury: "UQAD8y_EPRPmbDwK_e1pXXq9hCKpfNx8JWvUyqh5xB22k42H"
+        };
 
-        // آدرس‌های اختصاصی استخرهای شما
-        const CRYPTO_POOL_WALLET = "UQCeHlHUwoFhVcLQoJMXOvtcDskkrN1g4q6NVvdFimwp3Hnz";
-        const FOOTBALL_POOL_WALLET = "UQAD8y_EPRPmbDwK_e1pXXq9hCKpfNx8JWvUyqh5xB22k42H";
+        async function syncUserData() {
+            try {
+                const response = await fetch(`/api/user/${telegramId}`);
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('user-balance').innerText = data.user.balance.toFixed(3) + " TON";
+                    document.getElementById('user-claimable').innerText = data.user.claimable.toFixed(3) + " TON";
+                    document.getElementById('crypto-pool').innerText = data.pools.cryptoPool.toFixed(3) + " TON";
+                    document.getElementById('football-pool').innerText = data.pools.footballPool.toFixed(3) + " TON";
+                    
+                    if (data.addresses) {
+                        serverAddresses = data.addresses;
+                    }
 
-        // قوانین مالی جدید
-        const MIN_WITHDRAWAL_LIMIT = 300000; // حداقل ۳۰۰ هزار توکن
-        const WITHDRAWAL_FEE = 2000; // کارمزد کسر شده از توکن برداشتی کاربر
-
-        function updateUI() {
-            document.getElementById('user-balance').innerText = userBalance.toLocaleString() + " WLF";
-            document.getElementById('user-claimable').innerText = claimableBalance.toLocaleString() + " WLF";
-            document.getElementById('crypto-pool').innerText = cryptoPoolBalance.toLocaleString() + " WLF";
-            document.getElementById('football-pool').innerText = footballPoolBalance.toLocaleString() + " WLF";
+                    if (data.matches) {
+                        if (data.matches.Match1 && data.matches.Match1.isExpired) {
+                            document.getElementById('m1-home').disabled = true;
+                            document.getElementById('m1-draw').disabled = true;
+                            document.getElementById('m1-away').disabled = true;
+                            document.getElementById('m1-time').innerText = "⏱️ Match Ended (Closed)";
+                        }
+                        if (data.matches.Match2 && data.matches.Match2.isExpired) {
+                            document.getElementById('m2-home').disabled = true;
+                            document.getElementById('m2-draw').disabled = true;
+                            document.getElementById('m2-away').disabled = true;
+                            document.getElementById('m2-time').innerText = "⏱️ Match Ended (Closed)";
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Sync error:", e);
+            }
         }
-        updateUI();
 
-        // واریز واقعی به استخر کریپتو (کارمزد شبکه به عهده کاربر)
-        async function depositToPool() {
+        syncUserData();
+        setInterval(syncUserData, 15000);
+
+        async function depositToPool(poolType) {
             if (!tonConnectUI.connected) {
-                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
+                alert("Please connect your wallet first!");
                 return;
             }
-            
-            try {
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 300,
-                    messages: [
-                        {
-                            address: CRYPTO_POOL_WALLET,
-                            amount: "15000000" // کارمزد شبکه پرداخت شده از ولت کاربر
-                        }
-                    ]
-                };
+            let inputAmount = prompt("Enter amount of TON to deposit (Flexible / Unlimited):", "1.0");
+            if (!inputAmount || isNaN(inputAmount) || Number(inputAmount) <= 0) return;
 
-                await tonConnectUI.sendTransaction(transaction);
-                userBalance += 10000;
-                cryptoPoolBalance += 10000;
-                updateUI();
-                alert("تراکنش واقعی موفق! استخر کریپتو شارژ شد و موجودی شما افزایش یافت.");
+            let amountNum = Number(inputAmount);
+            let nanoTon = Math.floor(amountNum * 1000000000).toString();
+
+            try {
+                const targetTreasury = poolType === 'crypto' ? serverAddresses.cryptoTreasury : serverAddresses.footballTreasury;
+                
+                await tonConnectUI.sendTransaction({
+                    validUntil: Math.floor(Date.now() / 1000) + 300,
+                    messages: [{ 
+                        address: targetTreasury, 
+                        amount: nanoTon
+                    }]
+                });
+
+                const res = await fetch('/api/deposit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId, amount: amountNum, poolType })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    syncUserData();
+                    alert(`Successfully deposited ${amountNum} TON to ${poolType === 'crypto' ? 'Crypto' : 'Football'} Pool!`);
+                }
             } catch (e) {
                 console.error("Deposit error:", e);
-                alert("تراکنش واریز توسط کاربر لغو شد یا با خطا مواجه گردید.");
+                alert("Transaction cancelled or failed.");
             }
         }
 
-        // برداشت واقعی از استخر (حداقل 300 هزار و کسر کارمزد از توکن کاربر)
         async function withdrawFromPool() {
             if (!tonConnectUI.connected) {
-                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
+                alert("Please connect your wallet first!");
                 return;
             }
 
-            if (claimableBalance < MIN_WITHDRAWAL_LIMIT) {
-                alert(`حداقل درخواست برداشت ${MIN_WITHDRAWAL_LIMIT.toLocaleString()} توکن WLF است! موجودی قابل برداشت شما کافی نیست.`);
+            let inputAmount = prompt("Enter amount of TON to withdraw (Minimum 1 TON):", "1.0");
+            if (!inputAmount || isNaN(inputAmount)) return;
+
+            let amountNum = Number(inputAmount);
+            if (amountNum < 1.0) {
+                alert("Minimum withdrawal amount is 1 TON!");
                 return;
             }
 
             try {
-                // کسر کارمزد شبکه از توکن برداشتی کاربر
-                const netAmountToReceive = claimableBalance - WITHDRAWAL_FEE;
-
-                const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 300,
-                    messages: [
-                        {
-                            address: CRYPTO_POOL_WALLET,
-                            amount: "10000000" // پردازش کارمزد خروجی
-                        }
-                    ]
-                };
-
-                await tonConnectUI.sendTransaction(transaction);
-
-                claimableBalance = 0;
-                updateUI();
-                alert(`برداشت موفق!\nمبلغ ${netAmountToReceive.toLocaleString()} توکن WLF (پس از کسر ${WITHDRAWAL_FEE.toLocaleString()} توکن بابت کارمزد شبکه) به کیف پول شما واریز شد.`);
+                const res = await fetch('/api/withdraw', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId, amount: amountNum })
+                });
+                const data = await res.json();
+                alert(data.message);
+                if (data.success) {
+                    syncUserData();
+                }
             } catch (e) {
-                console.error("Withdraw error:", e);
-                alert("خطا در انجام تراکنش برداشت از استخر.");
+                console.error("Withdrawal error:", e);
+                alert("Withdrawal request failed.");
+            }
+        }
+
+        function sharePrediction() {
+            const shareText = encodeURIComponent("⚡ I've made my prediction in WLF Prediction Arena! Join the arena, test your skills, and win TON rewards:");
+            const shareUrl = `https://t.me/share/url?url=https://t.me/ilwin01_bot&text=${shareText}`;
+            
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
+                window.Telegram.WebApp.openTelegramLink(shareUrl);
+            } else {
+                window.open(shareUrl, '_blank');
             }
         }
 
@@ -503,14 +433,14 @@
 
         async function fetchCryptoPrices() {
             try {
-                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,theopennetwork,solana,binancecoin&vs_currencies=usd');
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin,theopennetwork&vs_currencies=usd');
                 const data = await response.json();
 
                 if (data.bitcoin) document.getElementById('btc-price').innerText = '$' + data.bitcoin.usd.toLocaleString();
                 if (data.ethereum) document.getElementById('eth-price').innerText = '$' + data.ethereum.usd.toLocaleString();
-                if (data.theopennetwork) document.getElementById('ton-price').innerText = '$' + data.theopennetwork.usd.toFixed(2);
-                if (data.solana) document.getElementById('sol-price').innerText = '$' + data.solana.usd.toFixed(2);
+                if (data.solana) document.getElementById('sol-price').innerText = '$' + data.solana.usd.toLocaleString();
                 if (data.binancecoin) document.getElementById('bnb-price').innerText = '$' + data.binancecoin.usd.toLocaleString();
+                if (data.theopennetwork) document.getElementById('ton-price').innerText = '$' + data.theopennetwork.usd.toFixed(2);
             } catch (e) {
                 console.error("Error fetching crypto prices:", e);
             }
@@ -519,60 +449,51 @@
         fetchCryptoPrices();
         setInterval(fetchCryptoPrices, 10000);
 
-        // سیستم شرط بندی و جایزه حرفه‌ای با محافظت در برابر ورشکستگی استخر (ضریب 1.9 تا 2.1)
-        function makeCryptoBet(symbol, direction, fee, odds) {
-            if (!tonConnectUI.connected) {
-                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
-                return;
+        async function makeCryptoBet(symbol, direction, odds) {
+            const multInput = document.getElementById(symbol.toLowerCase() + '-mult');
+            const multiplier = parseInt(multInput ? multInput.value : 1) || 1;
+            const fee = parseFloat((0.01 * multiplier).toFixed(4));
+
+            try {
+                const res = await fetch('/api/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId, poolType: 'crypto', fee, odds, targetId: symbol, choice: direction })
+                });
+                const data = await res.json();
+                alert(data.message);
+                if (data.success) {
+                    syncUserData();
+                    document.getElementById(symbol.toLowerCase() + '-up').disabled = true;
+                    document.getElementById(symbol.toLowerCase() + '-down').disabled = true;
+                }
+            } catch (e) {
+                console.error(e);
             }
-            if (userBalance < fee) {
-                alert("موجودی بازی کافی نیست! لطفاً حساب خود را شارژ کنید.");
-                return;
-            }
-
-            let potentialReward = fee * odds; // محاسبه پاداش بر اساس ضریب 1.9x تا 2.1x
-
-            // محافظت حرفه‌ای از استخر (جلوگیری از ورشکستگی)
-            if (cryptoPoolBalance < potentialReward) {
-                alert("سقف پرداخت این استخر برای این راند تکمیل است! امکان ثبت پیش‌بینی وجود ندارد.");
-                return;
-            }
-
-            userBalance -= fee;
-            cryptoPoolBalance += fee; // ورود سرمایه به استخر
-            updateUI();
-
-            alert(`پیش‌بینی ۵ دقیقه‌ای ${symbol} ثبت شد.\nمبلغ ${fee} توکن کسر گردید.\nپاداش احتمالی در صورت برد: ${potentialReward} WLF (با ضریب ${odds}x)`);
         }
 
-        function makeFootballBet(matchId, choice, fee, odds) {
-            if (!tonConnectUI.connected) {
-                alert("لطفاً ابتدا کیف پول خود را متصل کنید!");
-                return;
-            }
-            if (userBalance < fee) {
-                alert("موجودی بازی برای شرکت در این پیش‌بینی کافی نیست!");
-                return;
-            }
+        async function makeFootballBet(matchId, choice, odds) {
+            const multInput = document.getElementById(matchId === 'Match1' ? 'match1-mult' : 'match2-mult');
+            const multiplier = parseInt(multInput ? multInput.value : 1) || 1;
+            const fee = parseFloat((0.03 * multiplier).toFixed(4));
 
-            let potentialReward = fee * odds;
-
-            if (footballPoolBalance < potentialReward) {
-                alert("سقف پرداخت استخر فوتبال پر شده است!");
-                return;
-            }
-
-            userBalance -= fee;
-            footballPoolBalance += fee;
-            updateUI();
-
-            alert(`پیش‌بینی مسابقه فوتبال ثبت شد.\nپاداش احتمالی: ${potentialReward} WLF (با ضریب ${odds}x)`);
-            
-            if(matchId === 'Match1') {
-                document.getElementById('m1-home').disabled = true;
-                document.getElementById('m1-draw').disabled = true;
-                document.getElementById('m1-away').disabled = true;
-                document.getElementById('m1-home').innerText = "ثبت شد ✓";
+            try {
+                const res = await fetch('/api/bet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ telegramId, poolType: 'football', fee, odds, targetId: matchId, choice })
+                });
+                const data = await res.json();
+                alert(data.message);
+                if (data.success) {
+                    syncUserData();
+                    const prefix = matchId === 'Match1' ? 'm1' : 'm2';
+                    document.getElementById(prefix + '-home').disabled = true;
+                    document.getElementById(prefix + '-draw').disabled = true;
+                    document.getElementById(prefix + '-away').disabled = true;
+                }
+            } catch (e) {
+                console.error(e);
             }
         }
     </script>
